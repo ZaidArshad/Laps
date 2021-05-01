@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Laps</string>
     <string name="title_activity_maps">Map</string>
+    <string name="imgLapsDescription">Vector image of splash screen</string>
+    <string name="title_activity_splash">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
