@@ -5,6 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.VectorDrawable
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
@@ -17,8 +20,12 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.motion.widget.Debug.getLocation
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -27,10 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.CircleOptions
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import java.util.*
@@ -87,10 +91,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun plotMarkerOnCurrentLocation() {
         mMap.clear()
 
+        // Creates the marker for the person's location
         val myLocation = mTrackingClient.getCurrentLocation()
-        val circleOptions = CircleOptions().center(myLocation).radius(1.0)
+        val myPerson = MarkerOptions().position(myLocation!!)
+        val myPersonIcon = AppCompatResources.getDrawable(
+            this, R.drawable.ic_usermarkerslimborderless)!!.toBitmap()
+        myPerson.icon(BitmapDescriptorFactory.fromBitmap(myPersonIcon))
+
+        // Shifts the camera to the location and plots the point
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 20f))
-        mMap.addCircle(circleOptions)
+        mMap.addMarker(myPerson)
     }
 
 }
