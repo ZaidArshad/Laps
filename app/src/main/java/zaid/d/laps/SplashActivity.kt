@@ -11,6 +11,10 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.postDelayed
 
+/**
+Activity when the app is opened
+Opens the main activity once the phone is connected to the internet
+ */
 class SplashActivity: AppCompatActivity() {
 
     private lateinit var mLoadingBar: ProgressBar

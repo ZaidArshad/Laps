@@ -9,23 +9,22 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.webkit.PermissionRequest
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
 import com.google.android.gms.maps.model.LatLng
 
+/**
+Class to manage the location of the user
+Input: context: Context of the current activity
+ */
 class TrackingClient (context: Context) {
 
     private var locationGps: Location? = null
     private var locationNetwork: Location? = null
     private var mContext = context
-    var mLocationClient= mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private var mLocationClient= mContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
 
     /**
     Gets the current location
@@ -33,7 +32,7 @@ class TrackingClient (context: Context) {
     Output: The current latitude and longitude of the user is a connection is established
     If connection is not established outputs null statement
      */
-    fun getCurrentLocation(): LatLng? {
+    fun getCurrentLocation(): Location? {
 
 
         // Gets the status of whether or not the connection is established to the network
@@ -106,7 +105,7 @@ class TrackingClient (context: Context) {
                         TODO("Not yet implemented")
                     }
 
-                    override fun onProviderDisabled(provider: String?) {
+                    override fun onProviderDisabled(p0: String?) {
                         TODO("Not yet implemented")
                     }
 
@@ -121,20 +120,20 @@ class TrackingClient (context: Context) {
         if (locationNetwork != null && locationGps != null) {
             Log.d("getLocation()", "Network and Gps Connection")
             return if (locationGps!!.accuracy > locationNetwork!!.accuracy) {
-                LatLng(locationGps!!.latitude, locationGps!!.longitude)
+                locationGps
             } else {
-                LatLng(locationNetwork!!.latitude, locationNetwork!!.longitude)
+                locationNetwork
             }
         }
         // If the network provider is connected use those coordinates
         else if (locationNetwork != null) {
             Log.d("getLocation()", "Network Connection")
-            return LatLng(locationNetwork!!.latitude, locationNetwork!!.longitude)
+            return locationNetwork
         }
         // If the gps provider is connected use those coordinates
         else if (locationGps != null) {
             Log.d("getLocation()", "Gps Connection")
-            return LatLng(locationGps!!.latitude, locationGps!!.longitude)
+            return locationGps
         }
         // If neither network is connected
         else {
@@ -170,5 +169,14 @@ class TrackingClient (context: Context) {
             }
         }
         return false
+    }
+
+    fun getLatLong(): LatLng {
+        val currentLocation = getCurrentLocation()!!
+        return LatLng(currentLocation.latitude, currentLocation.longitude)
+    }
+
+    fun getRotation(oldLocation: Location): Float {
+        return oldLocation.bearingTo(getCurrentLocation())
     }
 }

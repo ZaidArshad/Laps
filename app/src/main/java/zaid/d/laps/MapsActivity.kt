@@ -1,52 +1,31 @@
 package zaid.d.laps
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.VectorDrawable
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
-import android.util.Log
 import android.widget.Button
-import android.widget.Toast
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.constraintlayout.motion.widget.Debug.getLocation
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.core.graphics.drawable.toBitmap
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import java.util.*
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    private var isMapReady = false
     private lateinit var mTrackingClient: TrackingClient
+    private lateinit var mMarkerManager: MarkerManager
     private lateinit var button: Button
     private var updateHandler = Handler()
 
+    /**
+    Called once the activity starts
+    Input: savedInstanceState: App's previous data from activity
+    Output: None
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -59,9 +38,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // Test button to set map to current location only works once gps/network is established
         button = findViewById<Button>(R.id.button)
         mTrackingClient = TrackingClient(this)
+        waitForMap()
 
         button.setOnClickListener() {
-            plotMarkerOnCurrentLocation()
+            mMarkerManager.plotMarkerOnCurrentLocation()
         }
     }
 
@@ -71,36 +51,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     Output: None
      */
     override fun onMapReady(googleMap: GoogleMap) {
-
         // Sets the global map to the created map
+        isMapReady = true
         mMap = googleMap
+
+        // Sets up the marker on the map
+        mMarkerManager = MarkerManager(this, mMap)
+        mMarkerManager.setMarker()
 
         // Gets the current position
         button.performClick()
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTrackingClient.getCurrentLocation(), 20f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTrackingClient.getLatLong(), 20f))
 
         // Updates the position regularly
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
-                button.performClick()
+                mMarkerManager.plotMarkerOnCurrentLocation()
                 updateHandler.postDelayed(this, 1000)
             }
         }, 0)
     }
 
-    private fun plotMarkerOnCurrentLocation() {
-        mMap.clear()
-
-        // Creates the marker for the person's location
-        val myLocation = mTrackingClient.getCurrentLocation()
-        val myPerson = MarkerOptions().position(myLocation!!)
-        val myPersonIcon = AppCompatResources.getDrawable(
-            this, R.drawable.ic_usermarkerslimborderless)!!.toBitmap()
-        myPerson.icon(BitmapDescriptorFactory.fromBitmap(myPersonIcon))
-
-        // Shifts the camera to the location and plots the point
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 20f))
-        mMap.addMarker(myPerson)
+    /**
+    Repeatedly loops until the map is ready
+    Input: None
+    Output: None
+     */
+    private fun waitForMap() {
+        val handler = Handler()
+        handler.post(object: Runnable {
+            override fun run() {
+                if (!isMapReady) handler.postDelayed(this, 100)
+            }
+        })
     }
 
 }
