@@ -9,3 +9,7 @@ object ConstantsTime {
 object ConstantsZoom {
     const val MAIN_ZOOM = 18F
 }
+
+object ConstantsDistance {
+    const val MIN_GAP = 0.00001
+}

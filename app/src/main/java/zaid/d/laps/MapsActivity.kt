@@ -77,14 +77,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(startLocation), ConstantsZoom.MAIN_ZOOM))
 
         // Keeps track of the position on the previous update
-        var oldPosition = ConversionsLocation.getCords(startLocation)
+        var oldPosition = startLocation
 
         // Updates the position regularly
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    mMarkerManager.interpolateMarker(oldPosition, ConversionsLocation.getCords(location!!))
-                    oldPosition = ConversionsLocation.getCords(location)
+                    mMarkerManager.interpolateMarker(oldPosition, location!!)
+                    oldPosition = location
                 }
                 updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
             }

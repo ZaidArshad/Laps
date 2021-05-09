@@ -11,6 +11,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
+import kotlin.math.sqrt
 
 /**
 Class to manage the Marker() object on the google maps fragment
@@ -29,11 +30,14 @@ class MarkerManager(context: Context, map: GoogleMap) {
            nextPosition: The position after the position update
     Output: None
      */
-    fun interpolateMarker(oldPosition: LatLng,nextPosition: LatLng) {
+    fun interpolateMarker(oldPosition: Location,nextPosition: Location) {
 
         // Starting position
         var lat = oldPosition.latitude
         var long = oldPosition.longitude
+
+        // Rotation
+        val dRotation = oldPosition.bearingTo(nextPosition) / ConstantsTime.FRAME_CAP
 
         // Distance to increment every frame
         val dLatitude = (nextPosition.latitude - lat) / ConstantsTime.FRAME_CAP
@@ -45,13 +49,14 @@ class MarkerManager(context: Context, map: GoogleMap) {
         val handler = Handler()
 
         // If the position has changed start animating
-        if (nextPosition.latitude != lat && nextPosition.longitude != long) {
+        if (isGapReached(oldPosition, nextPosition)) {
             handler.post(object : Runnable {
                 override fun run() {
                     lat += dLatitude
                     long += dLongitude
                     Log.d("", "lat, long = $lat, $long")
                     personMarker.position = LatLng(lat, long)
+                    personMarker.rotation += dRotation
 
                     // Does 30 frames of adjusting
                     if (frame < ConstantsTime.FRAME_CAP) {
@@ -62,8 +67,9 @@ class MarkerManager(context: Context, map: GoogleMap) {
             })
 
             // Sets the final location to the exact spot
-            personMarker.position = nextPosition
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nextPosition, 18f))
+            personMarker.position = ConversionsLocation.getCords(nextPosition)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                ConversionsLocation.getCords(nextPosition), ConstantsZoom.MAIN_ZOOM))
         }
     }
 
@@ -103,6 +109,19 @@ class MarkerManager(context: Context, map: GoogleMap) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(location), ConstantsZoom.MAIN_ZOOM))
         }
 
+    }
+
+    /**
+     Checks if the distance between 2 locations is greater than the min gap
+     Input: locationA: Location object to be compared with locationB
+            locationB: Location object to be compared with locationA
+     Output: Boolean state if whether the threshold radius is met
+     */
+    private fun isGapReached(locationA: Location, locationB: Location): Boolean {
+        val dLat = kotlin.math.abs(locationA.latitude - locationB.latitude)
+        val dLong = kotlin.math.abs(locationA.longitude - locationB.longitude)
+        val radius = sqrt((dLat*dLat) + (dLong*dLong))
+        return (radius >= ConstantsDistance.MIN_GAP)
     }
 
 
