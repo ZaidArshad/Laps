@@ -20,9 +20,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private var isMapReady = false
-    private lateinit var mTrackingClient: TrackingClient
     private lateinit var mMarkerManager: MarkerManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var startLocation: Location
     private lateinit var button: Button
     private var updateHandler = Handler()
 
@@ -42,9 +42,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
+        val extras  = intent.extras
+        startLocation = extras!!.get("startLocation") as Location
+
         // Test button to set map to current location only works once gps/network is established
         button = findViewById<Button>(R.id.button)
-        mTrackingClient = TrackingClient(this)
+
         waitForMap()
         button.setOnClickListener() {
             mMarkerManager.interpolateMarker(mMarkerManager.getMarkerPosition(), mMarkerManager.getAdjustedMarkerPosition())
@@ -68,21 +71,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Sets up the marker on the map
         mMarkerManager = MarkerManager(this, mMap)
-        mMarkerManager.setMarker()
+        mMarkerManager.setMarker(getCords(startLocation))
 
         // Gets the current position
         button.performClick()
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTrackingClient.getLatLong(), 18f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getCords(startLocation), 18f))
 
         // Keeps track of the position on the previous update
-        var oldPosition = mTrackingClient.getLatLong()
+        var oldPosition = getCords(startLocation)
 
         // Updates the position regularly
-
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
-                mMarkerManager.interpolateMarker(oldPosition, mTrackingClient.getLatLong())
-                oldPosition = mTrackingClient.getLatLong()
+                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    mMarkerManager.interpolateMarker(oldPosition, getCords(location!!))
+                    oldPosition = getCords(location)
+                }
                 updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME*2)
             }
         }, 0)
@@ -102,6 +106,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (!isMapReady) handler.postDelayed(this, 100)
             }
         })
+    }
+
+    private fun getCords(location: Location): LatLng {
+        return LatLng(location.latitude, location.longitude)
     }
 
 }

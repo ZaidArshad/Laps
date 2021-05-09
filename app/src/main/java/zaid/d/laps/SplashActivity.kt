@@ -1,15 +1,14 @@
 package zaid.d.laps
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
 import android.util.Log
 import android.widget.ProgressBar
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.postDelayed
+import com.google.android.gms.location.LocationServices
 
 /**
 Activity when the app is opened
@@ -26,24 +25,41 @@ class SplashActivity: AppCompatActivity() {
 
         // Loading bar on splash screen
         mLoadingBar = findViewById<ProgressBar>(R.id.loadingBar)
-        val trackingClient = TrackingClient(this)
-        trackingClient.getCurrentLocation()
-        runApp(trackingClient)
-
+        runApp()
     }
 
-    private fun runApp(trackingClient: TrackingClient) {
+    /**
+    Activity when the app is opened
+    Opens the main activity once the phone is connected to the internet
+     */
+    @SuppressLint("MissingPermission")
+    private fun runApp() {
+        PermissionClient.Client.locationPermissionCheck(this)
 
-        Handler().postDelayed({
-            if (!trackingClient.isNetworkConnected()) {
-                Log.d("Splash", "No network connection")
-                runApp(trackingClient)
-            }
-            else {
-                val intent = Intent(this, MapsActivity::class.java)
+        // Keeping track of login
+        val handler = Handler()
+        val intent = Intent(this, MapsActivity::class.java)
+        var isReady = false
+
+        // Checks if a location has been found
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.lastLocation.addOnSuccessListener{ location: Location? ->
+            isReady = true
+            intent.putExtra("startLocation",location)
+            Log.d("Splash", "Location Found!")
+        }
+
+        // Wait 2 seconds for the location, if not found recursive call to check again
+        handler.postDelayed({
+            if (isReady) {
                 startActivity(intent)
                 finish()
+            } else {
+                Log.d("Splash", "No location found")
+                runApp()
             }
-        }, 3000)
+        }, 2000)
+
+
     }
 }

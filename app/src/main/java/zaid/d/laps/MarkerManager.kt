@@ -1,16 +1,13 @@
 package zaid.d.laps
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
 import android.os.Handler
-import android.os.SystemClock
 import android.util.Log
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.LinearInterpolator
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
@@ -75,13 +72,10 @@ class MarkerManager(context: Context, map: GoogleMap) {
     Input: None
     Output: None
      */
-    fun setMarker() {
-        // Getting position
-        val trackingClient = TrackingClient(mContext)
-        val myLatLong = trackingClient.getLatLong()
+    fun setMarker(cords: LatLng) {
 
         // Marker position setting
-        myPerson = MarkerOptions().position(myLatLong)
+        myPerson = MarkerOptions().position(cords)
         myPerson.flat(true)
         myPerson.anchor(0.5F, 0.5F)
 
@@ -100,13 +94,16 @@ class MarkerManager(context: Context, map: GoogleMap) {
     Input: None
     Output: None
      */
+    @SuppressLint("MissingPermission")
     private fun plotMarkerOnCurrentLocation() {
-        val trackingClient = TrackingClient(mContext)
-        val myLatLong = trackingClient.getLatLong()
+        PermissionClient.Client.locationPermissionCheck(mContext)
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext)
+        fusedLocationClient.lastLocation.addOnSuccessListener{ location: Location? ->
+            // Shifts the camera to the location and plots the point
+            personMarker.position = getCords(location!!)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCords(location), 18f))
+        }
 
-        // Shifts the camera to the location and plots the point
-        personMarker.position = myLatLong
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLatLong, 18f))
     }
 
     fun getMarkerPosition(): LatLng {
@@ -116,6 +113,10 @@ class MarkerManager(context: Context, map: GoogleMap) {
         val lat = personMarker.position.latitude + 0.000005
         val long = personMarker.position.longitude + 0.000005
         return LatLng(lat, long)
+    }
+
+    private fun getCords(location: Location): LatLng {
+        return LatLng(location.latitude, location.longitude)
     }
 
 
