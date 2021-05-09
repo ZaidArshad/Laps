@@ -1,9 +1,13 @@
 package zaid.d.laps
 
+import android.annotation.SuppressLint
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.WindowManager
 import android.widget.Button
+import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -18,6 +22,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var isMapReady = false
     private lateinit var mTrackingClient: TrackingClient
     private lateinit var mMarkerManager: MarkerManager
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var button: Button
     private var updateHandler = Handler()
 
@@ -34,14 +39,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Test button to set map to current location only works once gps/network is established
         button = findViewById<Button>(R.id.button)
         mTrackingClient = TrackingClient(this)
         waitForMap()
-
         button.setOnClickListener() {
-            mMarkerManager.plotMarkerOnCurrentLocation()
+            mMarkerManager.interpolateMarker(mMarkerManager.getMarkerPosition(), mMarkerManager.getAdjustedMarkerPosition())
         }
     }
 
@@ -50,10 +56,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     Input: googleMap: The google map from the mapFragment
     Output: None
      */
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         // Sets the global map to the created map
         isMapReady = true
         mMap = googleMap
+        mMap.isBuildingsEnabled = false
+        mMap.isMyLocationEnabled = true
+
+
 
         // Sets up the marker on the map
         mMarkerManager = MarkerManager(this, mMap)
@@ -61,15 +72,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Gets the current position
         button.performClick()
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTrackingClient.getLatLong(), 20f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mTrackingClient.getLatLong(), 18f))
+
+        // Keeps track of the position on the previous update
+        var oldPosition = mTrackingClient.getLatLong()
 
         // Updates the position regularly
+
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
-                mMarkerManager.plotMarkerOnCurrentLocation()
-                updateHandler.postDelayed(this, 1000)
+                mMarkerManager.interpolateMarker(oldPosition, mTrackingClient.getLatLong())
+                oldPosition = mTrackingClient.getLatLong()
+                updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME*2)
             }
         }, 0)
+
+
     }
 
     /**

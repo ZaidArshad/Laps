@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -12,7 +13,13 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks.await
+import kotlinx.coroutines.tasks.await
 
 /**
 Class to manage the location of the user
@@ -59,7 +66,7 @@ class TrackingClient (context: Context) {
         // Gps connection established
         if (hasGps) {
             mLocationClient.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 5000, 0F,
+                LocationManager.GPS_PROVIDER, 1000, 0F,
                 object : LocationListener {
                     override fun onLocationChanged(location: Location?) {
                         if (location != null) locationGps = location
@@ -89,7 +96,7 @@ class TrackingClient (context: Context) {
         if (hasNetwork) {
             mLocationClient.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
-                5000,
+                1000,
                 0F,
                 object :
                     LocationListener {
@@ -172,11 +179,7 @@ class TrackingClient (context: Context) {
     }
 
     fun getLatLong(): LatLng {
-        val currentLocation = getCurrentLocation()!!
-        return LatLng(currentLocation.latitude, currentLocation.longitude)
-    }
-
-    fun getRotation(oldLocation: Location): Float {
-        return oldLocation.bearingTo(getCurrentLocation())
+        val location = getCurrentLocation()!!
+        return LatLng(location.latitude, location.longitude)
     }
 }
