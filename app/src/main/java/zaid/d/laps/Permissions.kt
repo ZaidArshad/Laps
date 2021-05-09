@@ -23,28 +23,25 @@ import com.google.android.gms.tasks.Tasks.await
 import kotlinx.coroutines.tasks.await
 
 /**
-Class to manage the location of the user
+Class to manage the permissions of the user
 Input: context: Context of the current activity
  */
-class PermissionClient () {
+object PermissionsLocation {
+    fun locationPermissionCheck(context: Context) {
+        while (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
 
-    object Client {
-        fun locationPermissionCheck(context: Context) {
-            while (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-
-                ActivityCompat.requestPermissions(
-                    context as Activity,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    10
-                )
-            }
+            ActivityCompat.requestPermissions(
+                context as Activity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                10
+            )
         }
     }
 }

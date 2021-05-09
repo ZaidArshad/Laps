@@ -50,7 +50,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         waitForMap()
         button.setOnClickListener() {
-            mMarkerManager.interpolateMarker(mMarkerManager.getMarkerPosition(), mMarkerManager.getAdjustedMarkerPosition())
         }
     }
 
@@ -71,23 +70,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Sets up the marker on the map
         mMarkerManager = MarkerManager(this, mMap)
-        mMarkerManager.setMarker(getCords(startLocation))
+        mMarkerManager.setMarker(ConversionsLocation.getCords(startLocation))
 
         // Gets the current position
         button.performClick()
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getCords(startLocation), 18f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(startLocation), ConstantsZoom.MAIN_ZOOM))
 
         // Keeps track of the position on the previous update
-        var oldPosition = getCords(startLocation)
+        var oldPosition = ConversionsLocation.getCords(startLocation)
 
         // Updates the position regularly
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    mMarkerManager.interpolateMarker(oldPosition, getCords(location!!))
-                    oldPosition = getCords(location)
+                    mMarkerManager.interpolateMarker(oldPosition, ConversionsLocation.getCords(location!!))
+                    oldPosition = ConversionsLocation.getCords(location)
                 }
-                updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME*2)
+                updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
             }
         }, 0)
 
@@ -103,13 +102,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val handler = Handler()
         handler.post(object: Runnable {
             override fun run() {
-                if (!isMapReady) handler.postDelayed(this, 100)
+                if (!isMapReady) handler.postDelayed(this, ConstantsTime.DELAY_SHORT)
             }
         })
-    }
-
-    private fun getCords(location: Location): LatLng {
-        return LatLng(location.latitude, location.longitude)
     }
 
 }

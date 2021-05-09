@@ -25,6 +25,8 @@ class SplashActivity: AppCompatActivity() {
 
         // Loading bar on splash screen
         mLoadingBar = findViewById<ProgressBar>(R.id.loadingBar)
+
+        // Runs the main activity once the location is established
         runApp()
     }
 
@@ -34,7 +36,7 @@ class SplashActivity: AppCompatActivity() {
      */
     @SuppressLint("MissingPermission")
     private fun runApp() {
-        PermissionClient.Client.locationPermissionCheck(this)
+        PermissionsLocation.locationPermissionCheck(this)
 
         // Keeping track of login
         val handler = Handler()
@@ -58,7 +60,7 @@ class SplashActivity: AppCompatActivity() {
                 Log.d("Splash", "No location found")
                 runApp()
             }
-        }, 2000)
+        }, ConstantsTime.DELAY_TIME)
 
 
     }

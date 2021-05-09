@@ -60,8 +60,8 @@ class MarkerManager(context: Context, map: GoogleMap) {
                     }
                 }
             })
+
             // Sets the final location to the exact spot
-            Log.d("$lat,$long to", "${nextPosition.latitude}, ${nextPosition.longitude}")
             personMarker.position = nextPosition
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(nextPosition, 18f))
         }
@@ -69,8 +69,6 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
     /**
     Creates the marker on the map to the current location of the user
-    Input: None
-    Output: None
      */
     fun setMarker(cords: LatLng) {
 
@@ -91,32 +89,20 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
     /**
     Updates the marker's location on the map when called
-    Input: None
-    Output: None
      */
     @SuppressLint("MissingPermission")
     private fun plotMarkerOnCurrentLocation() {
-        PermissionClient.Client.locationPermissionCheck(mContext)
+
+        // Gets the current location
+        PermissionsLocation.locationPermissionCheck(mContext)
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext)
         fusedLocationClient.lastLocation.addOnSuccessListener{ location: Location? ->
+
             // Shifts the camera to the location and plots the point
-            personMarker.position = getCords(location!!)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getCords(location), 18f))
+            personMarker.position = ConversionsLocation.getCords(location!!)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(location), ConstantsZoom.MAIN_ZOOM))
         }
 
-    }
-
-    fun getMarkerPosition(): LatLng {
-        return personMarker.position
-    }
-    fun getAdjustedMarkerPosition(): LatLng {
-        val lat = personMarker.position.latitude + 0.000005
-        val long = personMarker.position.longitude + 0.000005
-        return LatLng(lat, long)
-    }
-
-    private fun getCords(location: Location): LatLng {
-        return LatLng(location.latitude, location.longitude)
     }
 
 
