@@ -83,8 +83,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    mMarkerManager.interpolateMarker(oldPosition, location!!)
-                    oldPosition = location
+                    oldPosition = mMarkerManager.interpolateMarker(oldPosition, location!!, true)
                 }
                 updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
             }

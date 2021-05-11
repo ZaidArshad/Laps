@@ -11,5 +11,5 @@ object ConstantsZoom {
 }
 
 object ConstantsDistance {
-    const val MIN_GAP = 0.00001
+    const val MIN_GAP = 0.00005
 }

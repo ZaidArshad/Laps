@@ -23,18 +23,22 @@ class MarkerManager(context: Context, map: GoogleMap) {
     private var mMap = map
     private lateinit var myPerson: MarkerOptions
     private lateinit var personMarker: Marker
+    private var points = setOf<LatLng>()
 
     /**
     Smoothly adjusts the marker to a new location
     Input: oldPosition: The position prior to the position update
            nextPosition: The position after the position update
-    Output: None
+           draw: The
+    Output: The location of the where the marker has moved to
      */
-    fun interpolateMarker(oldPosition: Location,nextPosition: Location) {
+    fun interpolateMarker(oldPosition: Location,nextPosition: Location, draw: Boolean): Location {
 
         // Starting position
         var lat = oldPosition.latitude
         var long = oldPosition.longitude
+        val lineDetails = PolylineOptions()
+        val polyline = mMap.addPolyline(lineDetails)
 
         // Rotation
         val dRotation = oldPosition.bearingTo(nextPosition) / ConstantsTime.FRAME_CAP
@@ -58,6 +62,11 @@ class MarkerManager(context: Context, map: GoogleMap) {
                     personMarker.position = LatLng(lat, long)
                     personMarker.rotation += dRotation
 
+                    if (draw) {
+                        points = points.plus(LatLng(lat, long))
+                        polyline.points = points.toMutableList()
+                    }
+
                     // Does 30 frames of adjusting
                     if (frame < ConstantsTime.FRAME_CAP) {
                         frame++
@@ -68,9 +77,18 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
             // Sets the final location to the exact spot
             personMarker.position = ConversionsLocation.getCords(nextPosition)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                ConversionsLocation.getCords(nextPosition), ConstantsZoom.MAIN_ZOOM))
+            //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                //ConversionsLocation.getCords(nextPosition), ConstantsZoom.MAIN_ZOOM))
+            val cam = CameraPosition.Builder()
+                .bearing(oldPosition.bearingTo(nextPosition))
+                .zoom(ConstantsZoom.MAIN_ZOOM)
+                .target(ConversionsLocation.getCords(nextPosition))
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam.build()))
+
+
+            return nextPosition
         }
+        return oldPosition
     }
 
     /**
