@@ -41,7 +41,7 @@ class MarkerManager(context: Context, map: GoogleMap) {
         val polyline = mMap.addPolyline(lineDetails)
 
         // Rotation
-        val dRotation = oldPosition.bearingTo(nextPosition) / ConstantsTime.FRAME_CAP
+        val dRotation = equivalentAngle(nextPosition.bearing-oldPosition.bearing) / ConstantsTime.FRAME_CAP
 
         // Distance to increment every frame
         val dLatitude = (nextPosition.latitude - lat) / ConstantsTime.FRAME_CAP
@@ -58,7 +58,6 @@ class MarkerManager(context: Context, map: GoogleMap) {
                 override fun run() {
                     lat += dLatitude
                     long += dLongitude
-                    Log.d("", "lat, long = $lat, $long")
                     personMarker.position = LatLng(lat, long)
                     personMarker.rotation += dRotation
 
@@ -77,14 +76,12 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
             // Sets the final location to the exact spot
             personMarker.position = ConversionsLocation.getCords(nextPosition)
-            //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                //ConversionsLocation.getCords(nextPosition), ConstantsZoom.MAIN_ZOOM))
+
             val cam = CameraPosition.Builder()
-                .bearing(oldPosition.bearingTo(nextPosition))
+                .bearing(nextPosition.bearing)
                 .zoom(ConstantsZoom.MAIN_ZOOM)
                 .target(ConversionsLocation.getCords(nextPosition))
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam.build()))
-
 
             return nextPosition
         }
@@ -124,6 +121,7 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
             // Shifts the camera to the location and plots the point
             personMarker.position = ConversionsLocation.getCords(location!!)
+            personMarker.rotation = location.bearing
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(location), ConstantsZoom.MAIN_ZOOM))
         }
 
@@ -140,6 +138,17 @@ class MarkerManager(context: Context, map: GoogleMap) {
         val dLong = kotlin.math.abs(locationA.longitude - locationB.longitude)
         val radius = sqrt((dLat*dLat) + (dLong*dLong))
         return (radius >= ConstantsDistance.MIN_GAP)
+    }
+
+    /**
+    Gets an equivalent from the given angle
+    Input: angle: Angle to be compared to
+    Output: Angle with the same heading as given angle but absolutely smaller
+     */
+    private fun equivalentAngle(angle: Float): Float {
+        if (angle > 180) return (angle - 360)
+        else if (angle < -180) return (angle + 360)
+        return angle
     }
 
 
