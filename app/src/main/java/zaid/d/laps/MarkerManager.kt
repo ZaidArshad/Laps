@@ -23,7 +23,7 @@ class MarkerManager(context: Context, map: GoogleMap) {
     private var mMap = map
     private lateinit var myPerson: MarkerOptions
     private lateinit var personMarker: Marker
-    private var points = setOf<LatLng>()
+    private var points = mutableListOf<LatLng>()
 
     /**
     Smoothly adjusts the marker to a new location
@@ -53,7 +53,7 @@ class MarkerManager(context: Context, map: GoogleMap) {
         val handler = Handler()
 
         // If the position has changed start animating
-        if (isGapReached(oldPosition, nextPosition)) {
+        if (ConversionsLocation.isGapReached(oldPosition, nextPosition)) {
             handler.post(object : Runnable {
                 override fun run() {
                     lat += dLatitude
@@ -62,8 +62,8 @@ class MarkerManager(context: Context, map: GoogleMap) {
                     personMarker.rotation += dRotation
 
                     if (draw) {
-                        points = points.plus(LatLng(lat, long))
-                        polyline.points = points.toMutableList()
+                        points.add(LatLng(lat, long))
+                        polyline.points = points
                     }
 
                     // Does 30 frames of adjusting
@@ -128,19 +128,6 @@ class MarkerManager(context: Context, map: GoogleMap) {
     }
 
     /**
-     Checks if the distance between 2 locations is greater than the min gap
-     Input: locationA: Location object to be compared with locationB
-            locationB: Location object to be compared with locationA
-     Output: Boolean state if whether the threshold radius is met
-     */
-    private fun isGapReached(locationA: Location, locationB: Location): Boolean {
-        val dLat = kotlin.math.abs(locationA.latitude - locationB.latitude)
-        val dLong = kotlin.math.abs(locationA.longitude - locationB.longitude)
-        val radius = sqrt((dLat*dLat) + (dLong*dLong))
-        return (radius >= ConstantsDistance.MIN_GAP)
-    }
-
-    /**
     Gets an equivalent from the given angle
     Input: angle: Angle to be compared to
     Output: Angle with the same heading as given angle but absolutely smaller
@@ -149,6 +136,10 @@ class MarkerManager(context: Context, map: GoogleMap) {
         if (angle > 180) return (angle - 360)
         else if (angle < -180) return (angle + 360)
         return angle
+    }
+
+    fun getPoints(): Array<LatLng> {
+        return (points.toTypedArray())
     }
 
 

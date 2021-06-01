@@ -13,7 +13,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -25,6 +25,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var startLocation: Location
     private lateinit var button: Button
     private var updateHandler = Handler()
+    private var clicked = false
 
     /**
     Called once the activity starts
@@ -50,6 +51,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         waitForMap()
         button.setOnClickListener() {
+            if (clicked) {
+                clicked = false
+                PointsFile.readPoints(this)
+            }
+            else {
+                clicked = true
+                val points = mMarkerManager.getPoints()
+                PointsFile.savePoints(this, ConversionsLocation.optimizeCords(points))
+            }
         }
     }
 
@@ -72,8 +82,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMarkerManager = MarkerManager(this, mMap)
         mMarkerManager.setMarker(ConversionsLocation.getCords(startLocation))
 
-        // Gets the current position
-        button.performClick()
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(startLocation), ConstantsZoom.MAIN_ZOOM))
 
         // Keeps track of the position on the previous update
