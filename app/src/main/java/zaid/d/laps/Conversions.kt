@@ -43,3 +43,17 @@ object ConversionsLocation {
         return (radius >= ConstantsDistance.MIN_GAP)
     }
 }
+
+object ConversionsSort {
+
+    /** Bubble sort for given json files
+    Input: set: Set of the filenames
+     */
+    fun sortFiles(set: Array<String>): Array<String> {
+        for (i in set.indices)
+            for (j in 0 until set.size-i-1)
+                if (set[j][0] > set[j+1][0])
+                    set[j] = set[j+1].also {set[j+1] = set[j] }
+        return set
+    }
+}

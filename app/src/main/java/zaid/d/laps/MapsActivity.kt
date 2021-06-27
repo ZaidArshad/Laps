@@ -1,12 +1,17 @@
 package zaid.d.laps
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.WindowManager
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ListView
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -44,7 +49,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val extras  = intent.extras
-        startLocation = extras!!.get("startLocation") as Location
+        startLocation = extras?.get("startLocation") as Location
 
         // Test button to set map to current location only works once gps/network is established
         button = findViewById<Button>(R.id.button)
@@ -53,12 +58,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         button.setOnClickListener() {
             if (clicked) {
                 clicked = false
-                PointsFile.readPoints(this)
+                supportFragmentManager.popBackStack()
+                PointsFile.readPoints(this, 1)
             }
             else {
                 clicked = true
+
+                // Saves the points to a file
                 val points = mMarkerManager.getPoints()
-                PointsFile.savePoints(this, ConversionsLocation.optimizeCords(points))
+                PointsFile.savePoints(this, "testing",ConversionsLocation.optimizeCords(points))
+
+                val listRouteFragment = ListRouteFragment()
+                supportFragmentManager.beginTransaction().apply {
+                    replace(R.id.flRouteList, listRouteFragment)
+                    addToBackStack("close")
+                    commit()
+                }
             }
         }
     }

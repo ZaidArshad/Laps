@@ -7,17 +7,27 @@
     tools:context=".MapsActivity"
     >
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="650dp"
         android:scrollbars="vertical"
         class="com.google.android.gms.maps.SupportMapFragment"/>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/flRouteList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        />
+
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="match_parent"
+        android:padding="100dp"
         android:layout_marginTop="650dp"
         />
 </FrameLayout>

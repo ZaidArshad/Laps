@@ -14,3 +14,8 @@ object ConstantsDistance {
     // Roughly a meter
     const val MIN_GAP = 0.00005
 }
+
+object Strings {
+    const val SHARED_PREFS = "sharedPrefs"
+    const val FILENAME_SET = "fileNames"
+}
