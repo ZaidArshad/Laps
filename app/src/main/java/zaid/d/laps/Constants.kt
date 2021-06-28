@@ -17,5 +17,5 @@ object ConstantsDistance {
 
 object Strings {
     const val SHARED_PREFS = "sharedPrefs"
-    const val FILENAME_SET = "fileNames"
+    const val FILENAME_SET = "jsonFiles"
 }

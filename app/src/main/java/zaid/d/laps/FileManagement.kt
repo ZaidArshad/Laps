@@ -5,6 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
+import org.json.JSONObject
 import java.io.*
 
 object PointsFile {
@@ -23,14 +24,14 @@ object PointsFile {
 
         // Creates a file if there is not one
         if (getFileNames(context)[0] == "nothing") {
-            addFile(context, "1paths.json")
             fileName = "1path.json"
+            addFile(context, "1path.json")
             numOfFiles = 1
         }
         // If there is already a file
         else {
             numOfFiles = getFileNames(context).size + 1
-            fileName = numOfFiles.toString() + "paths.json"
+            fileName = numOfFiles.toString() + "path.json"
             addFile(context, fileName)
         }
 
@@ -44,7 +45,6 @@ object PointsFile {
         // Writes the points in format "Lat,Long"
         for (point in points) {
             val cords = (point.longitude.toString() + "," + point.longitude.toString() + "\n")
-            Log.d("Save:", cords)
             outputStreamWriter.write(cords)
         }
 
@@ -69,7 +69,6 @@ object PointsFile {
         var reading = true
 
         val routeName = tokenizeNumName(bufferedReader.readLine())[1]
-        Log.d("Route Name", routeName)
 
         // Reading until EOF
         while (reading) {
@@ -77,11 +76,10 @@ object PointsFile {
                 null -> reading = false
                 else -> {
                     points.add(tokenizePoint(cords))
-                    Log.d("Load", cords)
                 }
             }
         }
-        return Route(routeNum, routeName, points.toTypedArray())
+        return Route(routeNum, routeName, points.size,points.toTypedArray())
     }
 
     /**
@@ -126,6 +124,7 @@ object PointsFile {
            fileName: Name of the .json file
      */
     private fun addFile(context: Context, fileName: String) {
+        Log.d("fileName", fileName)
         val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
         val editor = sharedPref.edit()
         val fileNamesSet = sharedPref.getStringSet(Strings.FILENAME_SET, null)
@@ -133,6 +132,7 @@ object PointsFile {
 
         // Creates a new set if it's empty
         if (fileNamesSet == null) set.add(fileName)
+        else if (fileName == "1path.json") set.add(fileName)
 
         // Add filename to preexisting set if not already in
         else if (fileName !in fileNamesSet) {

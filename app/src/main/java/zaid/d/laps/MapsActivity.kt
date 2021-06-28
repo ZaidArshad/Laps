@@ -59,7 +59,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             if (clicked) {
                 clicked = false
                 supportFragmentManager.popBackStack()
-                PointsFile.readPoints(this, 1)
             }
             else {
                 clicked = true
