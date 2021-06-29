@@ -10,11 +10,12 @@ import com.google.android.gms.maps.model.PolylineOptions
          distance: Length of the route in meters
          points: Points of the users location
  */
-class Route(routeNum : Int, routeName: String, distance: Int,points : Array<LatLng>) {
+class Route(routeNum : Int, routeName: String, time: Long, distance: Int, points : Array<LatLng>) {
     private val mRouteNum =  routeNum
     private val mPoints = points
     private val mDistance = distance
     private val mRouteName = routeName
+    private val mBestTime = time
 
     /** Returns the points attribute */
     fun getPoints(): Array<LatLng> { return mPoints }
@@ -27,6 +28,9 @@ class Route(routeNum : Int, routeName: String, distance: Int,points : Array<LatL
 
     /** Returns the length in meters of the path */
     fun getDistance(): Int { return mDistance }
+
+    /** Returns the best time on the route */
+    fun getBestTime(): Long { return mBestTime }
 
     /**
     Creates a PolyLineOptions object from the points to

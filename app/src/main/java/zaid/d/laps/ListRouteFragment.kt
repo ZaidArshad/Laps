@@ -22,14 +22,13 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
         var items = PointsFile.getFileNames(context)
         items = ConversionsSort.sortFiles(items)
 
-        val routeNames = mutableListOf<String>()
+        val routeList = ArrayList<Route>()
 
         for (i in 1..items.size) {
-            routeNames.add(PointsFile.readPoints(context, i).getRouteName() + (i).toString())
+            routeList.add(PointsFile.readPoints(context, i))
         }
 
-
-        val arrayAdapter = ArrayAdapter(activity!!,android.R.layout.simple_list_item_1, routeNames)
-        listView?.adapter = arrayAdapter
+        val routeListAdapter = RouteListAdapter(context, R.layout.adapter_routes, routeList)
+        listView?.adapter = routeListAdapter
     }
 }

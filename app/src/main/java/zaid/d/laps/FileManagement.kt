@@ -17,7 +17,7 @@ object PointsFile {
            points: Array of the cords
     Output: none
      */
-    fun savePoints(context : Context, routeName: String, points : Array<LatLng>) {
+    fun savePoints(context : Context, routeName: String, bestTime: Long, points : Array<LatLng>) {
 
         val fileName: String
         val numOfFiles: Int
@@ -40,7 +40,7 @@ object PointsFile {
         val outputStreamWriter = OutputStreamWriter(outputStream)
 
         // Writes file num and routeName
-        outputStreamWriter.write("$numOfFiles,$routeName\n")
+        outputStreamWriter.write("$numOfFiles,$routeName,$bestTime\n")
 
         // Writes the points in format "Lat,Long"
         for (point in points) {
@@ -68,7 +68,9 @@ object PointsFile {
         val points = mutableListOf<LatLng>()
         var reading = true
 
-        val routeName = tokenizeNumName(bufferedReader.readLine())[1]
+        val firstLine = tokenizeFirstLine(bufferedReader.readLine())
+        val routeName = firstLine[1]
+        val time = firstLine[2].toLong()
 
         // Reading until EOF
         while (reading) {
@@ -79,7 +81,7 @@ object PointsFile {
                 }
             }
         }
-        return Route(routeNum, routeName, points.size,points.toTypedArray())
+        return Route(routeNum, routeName, time, points.size, points.toTypedArray())
     }
 
     /**
@@ -101,21 +103,28 @@ object PointsFile {
     }
 
     /**
-    Coverts the first line of the given string to an array of {num, name} of route
+    Coverts the first line of the given string to an array of {num, name, time} of route
     Input: line: String of the first line of the file
     Output: Array of num and name of file
      */
-    private fun tokenizeNumName(line: String): Array<String> {
+    private fun tokenizeFirstLine(line: String): Array<String> {
         var num = ""
         var name = ""
-        var passedComma = false
+        var time = ""
+        var commaLevel = 0
 
         for (c in line) {
-            if (c == ',') passedComma = true
-            else if (passedComma) name += c
-            else num += c
+            if (c == ',') commaLevel++
+            else {
+                // Adds the comma-separated values to their vars
+                when (commaLevel) {
+                    0 -> num += c
+                    1 -> name += c
+                    2 -> time += c
+                }
+            }
         }
-        return arrayOf(num, name)
+        return arrayOf(num, name, time)
     }
 
     /**

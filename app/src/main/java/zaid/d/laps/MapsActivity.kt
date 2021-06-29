@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import java.util.*
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -65,7 +66,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 // Saves the points to a file
                 val points = mMarkerManager.getPoints()
-                PointsFile.savePoints(this, "testing",ConversionsLocation.optimizeCords(points))
+                PointsFile.savePoints(this, "testing", System.currentTimeMillis(),ConversionsLocation.optimizeCords(points))
 
                 val listRouteFragment = ListRouteFragment()
                 supportFragmentManager.beginTransaction().apply {
