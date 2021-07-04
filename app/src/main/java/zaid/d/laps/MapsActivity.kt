@@ -57,23 +57,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         waitForMap()
         button.setOnClickListener() {
-            if (clicked) {
-                clicked = false
-                supportFragmentManager.popBackStack()
-            }
-            else {
-                clicked = true
-
-                // Saves the points to a file
-                val points = mMarkerManager.getPoints()
-                PointsFile.savePoints(this, "testing", System.currentTimeMillis(),ConversionsLocation.optimizeCords(points))
 
                 val listRouteFragment = ListRouteFragment()
+                val bundle = Bundle()
+                bundle.putSerializable("points", mMarkerManager.getPoints())
+                listRouteFragment.arguments = bundle
+
                 supportFragmentManager.beginTransaction().apply {
                     replace(R.id.flRouteList, listRouteFragment)
+
                     addToBackStack("close")
                     commit()
-                }
             }
         }
     }

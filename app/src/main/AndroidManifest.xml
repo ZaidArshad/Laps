@@ -22,7 +22,7 @@
         <activity
             android:name=".MapsActivity"
             android:label="Home"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:theme="@style/MainTheme" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -36,10 +36,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+
+
         <activity
             android:name=".SplashActivity"
             android:label="Laps"
-            android:screenOrientation="portrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
