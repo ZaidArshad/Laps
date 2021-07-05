@@ -6,6 +6,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -31,7 +32,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var startLocation: Location
     private lateinit var button: Button
     private var updateHandler = Handler()
-    private var clicked = false
 
     /**
     Called once the activity starts
@@ -54,10 +54,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Test button to set map to current location only works once gps/network is established
         button = findViewById<Button>(R.id.button)
-
         waitForMap()
-        button.setOnClickListener() {
 
+        button.setOnClickListener() {
+            if (supportFragmentManager.backStackEntryCount == 0) {
                 val listRouteFragment = ListRouteFragment()
                 val bundle = Bundle()
                 bundle.putSerializable("points", mMarkerManager.getPoints())
@@ -65,9 +65,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 supportFragmentManager.beginTransaction().apply {
                     replace(R.id.flRouteList, listRouteFragment)
-
-                    addToBackStack("close")
+                    addToBackStack("open")
                     commit()
+                }
+            }
+            else {
+                supportFragmentManager.popBackStack()
             }
         }
     }

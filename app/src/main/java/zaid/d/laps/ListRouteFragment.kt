@@ -1,5 +1,6 @@
 package zaid.d.laps
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -26,10 +27,11 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
 
         // Gets the names of the files
         val items = PointsFile.getFileNames(context)
+        ConversionsSort.sortFiles(items)
         val routeList = ArrayList<Route>()
 
         // If there are files to read, read them
-        if (items[0] != "nothing")
+        if (items[0] == "1path.json")
             for (i in 1..items.size) {
                 routeList.add(PointsFile.readPoints(context, i))
         }
@@ -37,6 +39,8 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
         // Creates the footer button for the list
         val addButton = Button(context)
         addButton.setText(R.string.record_new_route)
+        addButton.setTextColor(Color.parseColor("#FFFF78"))
+        addButton.setBackgroundColor(Color.parseColor("#ED1B4D"))
         listView?.addFooterView(addButton)
 
         // Creates the list of the items
