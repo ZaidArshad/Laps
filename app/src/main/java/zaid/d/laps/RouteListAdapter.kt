@@ -2,6 +2,7 @@ package zaid.d.laps
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,10 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
         distanceView.text = formattedLength
         nameView.text = name
         timeView.text = date
+
+        view.setOnClickListener() {
+            Log.d("clicked", date)
+        }
 
         return view
     }

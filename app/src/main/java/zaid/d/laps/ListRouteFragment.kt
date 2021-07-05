@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.inflate
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.ListView
 import androidx.core.content.res.ColorStateListInflaterCompat.inflate
+import androidx.core.view.marginEnd
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
 import kotlin.system.exitProcess
@@ -41,11 +43,13 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
         addButton.setText(R.string.record_new_route)
         addButton.setTextColor(Color.parseColor("#FFFF78"))
         addButton.setBackgroundColor(Color.parseColor("#ED1B4D"))
+        addButton.height = 150
         listView?.addFooterView(addButton)
 
         // Creates the list of the items
         val routeListAdapter = RouteListAdapter(context, R.layout.adapter_routes, routeList)
         listView?.adapter = routeListAdapter
+        listView?.isClickable = true
 
         // Creates a new route
         addButton.setOnClickListener {
