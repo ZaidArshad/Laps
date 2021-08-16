@@ -51,10 +51,13 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
         listView?.adapter = routeListAdapter
         listView?.isClickable = true
 
-        // Creates a new route
+        // Create record new route button click
         addButton.setOnClickListener {
-            val points = arguments?.getSerializable("points") as Array<LatLng>
-            PointsFile.savePoints(context, "testing", System.currentTimeMillis(),ConversionsLocation.optimizeCords(points))
+            // val points = arguments?.getSerializable("points") as Array<LatLng>
+            // PointsFile.savePoints(context, "testing", System.currentTimeMillis(),ConversionsLocation.optimizeCords(points))
+
+            // Starts drawing path and recording
+            DrawingManagement.setDrawing(context, true);
             activity?.supportFragmentManager?.popBackStack()
         }
 

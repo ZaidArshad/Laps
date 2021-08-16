@@ -20,6 +20,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.MainScope
 import java.util.*
 
 
@@ -103,7 +104,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    oldPosition = mMarkerManager.interpolateMarker(oldPosition, location!!, true)
+                    oldPosition = mMarkerManager.interpolateMarker(oldPosition, location!!, DrawingManagement.getDrawing(this@MapsActivity))
                 }
                 updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
             }

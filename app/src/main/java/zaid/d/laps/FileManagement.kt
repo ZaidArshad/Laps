@@ -167,3 +167,28 @@ object PointsFile {
         else return arrayOf("nothing")
     }
 }
+
+object DrawingManagement {
+    /**
+    Sets the global variable to draw on the map
+     Input:
+        context: Context of the application
+        status: Whether or not marker should draw
+     */
+    fun setDrawing(context: Context, status: Boolean) {
+        val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putBoolean(Strings.IS_DRAWING, status)
+        editor.apply()
+    }
+
+    /**
+    Sets the global variable to draw on the map
+    Input: context: Context of the application
+    Output : The status of whether or not the marker is drawing
+     */
+    fun getDrawing(context: Context): Boolean {
+        val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
+        return sharedPref.getBoolean(Strings.IS_DRAWING, false)
+    }
+}
