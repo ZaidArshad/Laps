@@ -65,13 +65,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 listRouteFragment.arguments = bundle
 
                 supportFragmentManager.beginTransaction().apply {
+                    setCustomAnimations(
+                        R.anim.enter_from_bottom,
+                        R.anim.exit_from_bottom,
+                        R.anim.enter_from_bottom,
+                        R.anim.exit_from_bottom
+                    )
                     replace(R.id.flRouteList, listRouteFragment)
                     addToBackStack("open")
                     commit()
                 }
+                button.rotation = 180F
             }
             else {
                 supportFragmentManager.popBackStack()
+                button.rotation = 0F
             }
         }
     }
