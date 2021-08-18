@@ -1,26 +1,18 @@
 package zaid.d.laps
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.WindowManager
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
 import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.MainScope
 import java.util.*
 
 
@@ -31,7 +23,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMarkerManager: MarkerManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var startLocation: Location
-    private lateinit var button: Button
+    private lateinit var listButton: Button
     private var updateHandler = Handler()
 
     /**
@@ -54,10 +46,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         startLocation = extras?.get("startLocation") as Location
 
         // Test button to set map to current location only works once gps/network is established
-        button = findViewById<Button>(R.id.button)
+        listButton = findViewById<Button>(R.id.button)
         waitForMap()
 
-        button.setOnClickListener() {
+        supportFragmentManager.addOnBackStackChangedListener {
+            if (listButton.rotation == 0F) listButton.rotation = 180F
+            else listButton.rotation = 0F
+        }
+
+        // Main Button
+        listButton.setOnClickListener() {
+
+            // Opens the list of routes
             if (supportFragmentManager.backStackEntryCount == 0) {
                 val listRouteFragment = ListRouteFragment()
                 val bundle = Bundle()
@@ -75,11 +75,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     addToBackStack("open")
                     commit()
                 }
-                button.rotation = 180F
-            }
-            else {
+            } else {
                 supportFragmentManager.popBackStack()
-                button.rotation = 0F
             }
         }
     }
