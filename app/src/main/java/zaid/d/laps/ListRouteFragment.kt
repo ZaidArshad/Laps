@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.inflate
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.AdapterView
 import android.widget.Button
 import android.widget.ListView
@@ -14,6 +15,7 @@ import androidx.core.content.res.ColorStateListInflaterCompat.inflate
 import androidx.core.view.marginEnd
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.android.synthetic.main.activity_maps.*
 import kotlin.system.exitProcess
 
 class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
@@ -57,7 +59,9 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
             // PointsFile.savePoints(context, "testing", System.currentTimeMillis(),ConversionsLocation.optimizeCords(points))
 
             // Starts drawing path and recording
-            DrawingManagement.setDrawing(context, true);
+            activity!!.startButton.visibility = View.VISIBLE
+            activity!!.startButton.animation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
+            activity!!.startButton.animate()
             activity?.supportFragmentManager?.popBackStack()
         }
 

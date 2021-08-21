@@ -14,4 +14,6 @@
     <string name="add">add</string>
     <string name="back"><![CDATA[<-]]></string>
     <string name="record_new_route">Record New Route</string>
+    <string name="start">Start</string>
+    <string name="zeroTimer">0:00</string>
 </resources>

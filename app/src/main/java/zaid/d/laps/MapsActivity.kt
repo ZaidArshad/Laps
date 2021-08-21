@@ -5,14 +5,18 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.view.View
 import android.view.WindowManager
+import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.TextView
 import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import kotlinx.android.synthetic.main.activity_maps.*
 import java.util.*
 
 
@@ -23,8 +27,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMarkerManager: MarkerManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var startLocation: Location
-    private lateinit var listButton: Button
+    private lateinit var mainButton: Button
+    private lateinit var timerTextView: TextView
+    lateinit var startButton: Button
     private var updateHandler = Handler()
+
 
     /**
     Called once the activity starts
@@ -46,24 +53,44 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         startLocation = extras?.get("startLocation") as Location
 
         // Test button to set map to current location only works once gps/network is established
-        listButton = findViewById<Button>(R.id.button)
+        mainButton = findViewById(R.id.mainButton)
         waitForMap()
 
+        // Sets the start button and timer
+        startButton = findViewById(R.id.startButton)
+        timerTextView = findViewById(R.id.timerTextView)
+
+        // Changes the orientation of the main button
         supportFragmentManager.addOnBackStackChangedListener {
-            if (listButton.rotation == 0F) listButton.rotation = 180F
-            else listButton.rotation = 0F
+            if (mainButton.rotation == 0F) mainButton.rotation = 180F
+            else mainButton.rotation = 0F
+        }
+
+        // Start drawing and recording when the start button is pressed
+        startButton.setOnClickListener() {
+            DrawingManagement.setDrawing(this, true)
+            startButton.animation = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+            startButton.animate()
+            startButton.visibility = View.INVISIBLE
+
+            timerTextView.animation = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+            timerTextView.animate()
+            timerTextView.visibility = View.VISIBLE
         }
 
         // Main Button
-        listButton.setOnClickListener() {
+        mainButton.setOnClickListener() {
 
             // Opens the list of routes
             if (supportFragmentManager.backStackEntryCount == 0) {
+
+                // Passes the points into the fragment
                 val listRouteFragment = ListRouteFragment()
                 val bundle = Bundle()
                 bundle.putSerializable("points", mMarkerManager.getPoints())
                 listRouteFragment.arguments = bundle
 
+                // Animation for the list opening
                 supportFragmentManager.beginTransaction().apply {
                     setCustomAnimations(
                         R.anim.enter_from_bottom,
@@ -94,9 +121,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap.isBuildingsEnabled = false
         mMap.isMyLocationEnabled = true
 
-
-
         // Sets up the marker on the map
+        DrawingManagement.setDrawing(this, false)
         mMarkerManager = MarkerManager(this, mMap)
         mMarkerManager.setMarker(ConversionsLocation.getCords(startLocation))
 

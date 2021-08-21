@@ -25,7 +25,7 @@
         />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/mainButton"
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
@@ -34,4 +34,33 @@
         android:background="@drawable/ic_list_open_button"
         android:layout_gravity="bottom | center"
         />
+
+    <Button
+        android:id="@+id/startButton"
+        android:text="@string/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:textColor="@color/colorAccent"
+        android:background="@color/colorPrimary"
+        android:textSize="30sp"
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp"
+        android:layout_gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/timerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/zeroTimer"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/colorPrimary"
+        android:visibility="invisible"
+        android:textSize="60sp"
+        android:layout_gravity="top | center"
+        android:layout_marginTop="150dp"
+        />
+
+    
 </FrameLayout>
