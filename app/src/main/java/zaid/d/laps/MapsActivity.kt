@@ -4,15 +4,16 @@ import android.annotation.SuppressLint
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.os.Handler
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.Chronometer
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.activity_maps.*
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -77,11 +79,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             DrawingManagement.setDrawing(this, true) // Cursor leaves trail
             fadeOut(startButton)
             fadeOut(mainButton)
-            fadeIn(chronometer)
-            fadeIn(finishButton)
-
-            chronometer.base = SystemClock.elapsedRealtime()
-            chronometer.start()
+            transitionToRunning()
         }
 
         // When the user wants to finish running
@@ -191,6 +189,46 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         v.animate()
         v.visibility = View.VISIBLE
     }
+
+    fun transitionToRunning() {
+
+        // Gets the views from the layout
+        val startBlock = findViewById<View>(R.id.startBlock)
+        val startBlockNum = findViewById<TextView>(R.id.startBlockNums)
+
+        // Array of colors and fades in transition pieces
+        val colors: IntArray = intArrayOf(R.color.red, R.color.yellow, R.color.green)
+        fadeIn(startBlock)
+        fadeIn(startBlockNum)
+
+        // Loop runs 4 times
+        val handler = Handler()
+        var i = 0
+        handler.postDelayed(object: Runnable {
+            override fun run() {
+                // Changes the color every cycle
+                if (i < 3) {
+                    startBlock.setBackgroundColor(ContextCompat.getColor(this@MapsActivity, colors[i]))
+                    startBlockNum.text = (3-i).toString()
+                }
+
+                // Looping mechanisms
+                i++
+                if (i != 4) handler.postDelayed(this, 1000)
+
+                // Fades transition away and starts stop watch
+                else {
+                    fadeOut(startBlock)
+                    fadeOut(startBlockNum)
+                    fadeIn(chronometer)
+                    fadeIn(finishButton)
+                    chronometer.base = SystemClock.elapsedRealtime()
+                    chronometer.start()
+                }
+            }
+        }, 0)
+    }
+
 
 }
 

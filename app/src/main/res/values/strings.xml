@@ -17,4 +17,6 @@
     <string name="start">Start</string>
     <string name="zeroTimer">0:00</string>
     <string name="finish">Finish</string>
+    <string name="_3">3</string>
+    <string name="none">none</string>
 </resources>
