@@ -122,7 +122,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 supportFragmentManager.popBackStack()
             }
         }
-    }
+    } 
 
     /**
     Called once the map fragment is ready
