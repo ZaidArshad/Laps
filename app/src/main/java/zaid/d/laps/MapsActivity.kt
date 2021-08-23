@@ -4,11 +4,14 @@ import android.annotation.SuppressLint
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
+import android.os.SystemClock
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.Button
+import android.widget.Chronometer
 import android.widget.TextView
 import com.google.android.gms.location.*
 
@@ -28,8 +31,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var startLocation: Location
     private lateinit var mainButton: Button
-    private lateinit var timerTextView: TextView
+
     lateinit var startButton: Button
+    lateinit var finishButton: Button
+    private lateinit var chronometer: Chronometer
+    var chronometerRunning = false
+
     private var updateHandler = Handler()
 
 
@@ -58,7 +65,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Sets the start button and timer
         startButton = findViewById(R.id.startButton)
-        timerTextView = findViewById(R.id.timerTextView)
+        finishButton = findViewById(R.id.finishButton)
+        chronometer = findViewById(R.id.chronometer)
 
         // Changes the orientation of the main button
         supportFragmentManager.addOnBackStackChangedListener {
@@ -66,16 +74,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             else mainButton.rotation = 0F
         }
 
-        // Start drawing and recording when the start button is pressed
+        // When the user wants to start running
         startButton.setOnClickListener() {
-            DrawingManagement.setDrawing(this, true)
-            startButton.animation = AnimationUtils.loadAnimation(this, R.anim.fade_out)
-            startButton.animate()
-            startButton.visibility = View.INVISIBLE
+            DrawingManagement.setDrawing(this, true) // Cursor leaves trail
+            fadeOut(startButton)
+            fadeOut(mainButton)
+            fadeIn(chronometer)
+            fadeIn(finishButton)
 
-            timerTextView.animation = AnimationUtils.loadAnimation(this, R.anim.fade_in)
-            timerTextView.animate()
-            timerTextView.visibility = View.VISIBLE
+            chronometer.base = SystemClock.elapsedRealtime()
+            chronometer.start()
+        }
+
+        // When the user wants to finish running
+        finishButton.setOnClickListener() {
+            DrawingManagement.setDrawing(this, false) // Cursor doesn't leaves trail
+            fadeIn(mainButton)
+            fadeOut(chronometer)
+            fadeOut(finishButton)
         }
 
         // Main Button
@@ -156,6 +172,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (!isMapReady) handler.postDelayed(this, ConstantsTime.DELAY_SHORT)
             }
         })
+    }
+
+    /**
+    Fades the given view out
+    Input: View object to fade out
+     */
+    private fun fadeOut(v: View) {
+        v.animation = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+        v.animate()
+        v.visibility = View.INVISIBLE
+    }
+
+    /**
+    Fades the given view in
+    Input: View object to fade in
+     */
+    fun fadeIn(v: View) {
+        v.animation = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+        v.animate()
+        v.visibility = View.VISIBLE
     }
 
 }

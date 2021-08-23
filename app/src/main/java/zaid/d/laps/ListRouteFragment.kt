@@ -1,6 +1,7 @@
 package zaid.d.laps
 
 import android.graphics.Color
+import android.net.MailTo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -59,9 +60,8 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
             // PointsFile.savePoints(context, "testing", System.currentTimeMillis(),ConversionsLocation.optimizeCords(points))
 
             // Starts drawing path and recording
-            activity!!.startButton.visibility = View.VISIBLE
-            activity!!.startButton.animation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
-            activity!!.startButton.animate()
+            (activity as MapsActivity).fadeIn(activity!!.startButton)
+
             activity?.supportFragmentManager?.popBackStack()
         }
 

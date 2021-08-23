@@ -31,8 +31,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/ic_list_open_button"
         android:layout_gravity="bottom | center"
+        android:background="@drawable/ic_list_open_button"
         />
 
     <Button
@@ -49,18 +49,35 @@
         android:layout_gravity="center"
         />
 
-    <TextView
-        android:id="@+id/timerTextView"
+    <Chronometer
+        android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/zeroTimer"
         android:fontFamily="sans-serif-medium"
         android:textColor="@color/colorPrimary"
+        android:shadowColor="@color/black"
+        android:shadowRadius="1"
+        android:shadowDx="0.5"
+        android:shadowDy="0.5"
         android:visibility="invisible"
         android:textSize="60sp"
         android:layout_gravity="top | center"
         android:layout_marginTop="150dp"
         />
 
+    <Button
+        android:id="@+id/finishButton"
+        android:text="@string/finish"
+        android:visibility="invisible"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:textColor="@color/colorAccent"
+        android:background="@color/colorPrimary"
+        android:textSize="30sp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="bottom | center"
+        />
     
 </FrameLayout>
