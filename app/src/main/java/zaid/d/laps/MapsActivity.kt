@@ -35,7 +35,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var startButton: Button
     lateinit var finishButton: Button
     private lateinit var chronometer: Chronometer
-    var chronometerRunning = false
 
     private var updateHandler = Handler()
 
@@ -59,14 +58,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val extras  = intent.extras
         startLocation = extras?.get("startLocation") as Location
 
-        // Test button to set map to current location only works once gps/network is established
+        // Sets the views used in the main app
         mainButton = findViewById(R.id.mainButton)
-        waitForMap()
-
-        // Sets the start button and timer
         startButton = findViewById(R.id.startButton)
         finishButton = findViewById(R.id.finishButton)
         chronometer = findViewById(R.id.chronometer)
+
+        waitForMap()
 
         // Changes the orientation of the main button
         supportFragmentManager.addOnBackStackChangedListener {
