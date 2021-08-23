@@ -83,7 +83,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeIn(finishButton)
 
             chronometer.base = SystemClock.elapsedRealtime()
-            chronometer.start()
         }
 
         // When the user wants to finish running
@@ -122,7 +121,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 supportFragmentManager.popBackStack()
             }
         }
-    } 
+    }
 
     /**
     Called once the map fragment is ready
