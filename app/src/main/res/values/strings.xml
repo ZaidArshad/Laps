@@ -19,4 +19,6 @@
     <string name="finish">Finish</string>
     <string name="_3">3</string>
     <string name="none">none</string>
+    <string name="confirm">Confirm</string>
+    <string name="timeRecorded">Time: 17:00</string>
 </resources>

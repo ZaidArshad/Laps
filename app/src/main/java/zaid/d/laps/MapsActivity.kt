@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
@@ -21,7 +20,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import kotlinx.android.synthetic.main.activity_maps.*
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -32,7 +30,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMarkerManager: MarkerManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var startLocation: Location
+
     private lateinit var mainButton: Button
+    var listOpened = false
 
     lateinit var startButton: Button
     lateinit var finishButton: Button
@@ -70,7 +70,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Changes the orientation of the main button
         supportFragmentManager.addOnBackStackChangedListener {
-            if (mainButton.rotation == 0F) mainButton.rotation = 180F
+            if (listOpened) mainButton.rotation = 180F
             else mainButton.rotation = 0F
         }
 
@@ -88,35 +88,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeIn(mainButton)
             fadeOut(chronometer)
             fadeOut(finishButton)
+
+            // Passes the points into the fragment
+            val completedRunFragment = CompletedRunFragment()
+            val bundle = Bundle()
+            bundle.putSerializable("points", mMarkerManager.getPoints())
+            completedRunFragment.arguments = bundle
+
+            // Animation for the list opening
+            supportFragmentManager.beginTransaction().apply {
+                setCustomAnimations(
+                    R.anim.enter_from_bottom,
+                    R.anim.exit_from_bottom,
+                    R.anim.enter_from_bottom,
+                    R.anim.exit_from_bottom
+                )
+                replace(R.id.completedRunFragment, completedRunFragment)
+                addToBackStack("open")
+                commit()
+            }
+
         }
 
         // Main Button
         mainButton.setOnClickListener() {
-
-            // Opens the list of routes
-            if (supportFragmentManager.backStackEntryCount == 0) {
-
-                // Passes the points into the fragment
-                val listRouteFragment = ListRouteFragment()
-                val bundle = Bundle()
-                bundle.putSerializable("points", mMarkerManager.getPoints())
-                listRouteFragment.arguments = bundle
-
-                // Animation for the list opening
-                supportFragmentManager.beginTransaction().apply {
-                    setCustomAnimations(
-                        R.anim.enter_from_bottom,
-                        R.anim.exit_from_bottom,
-                        R.anim.enter_from_bottom,
-                        R.anim.exit_from_bottom
-                    )
-                    replace(R.id.flRouteList, listRouteFragment)
-                    addToBackStack("open")
-                    commit()
-                }
-            } else {
-                supportFragmentManager.popBackStack()
-            }
+            openRouteListFragment()
         }
     }
 
@@ -171,6 +167,40 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     /**
+    Opens the fragment of the list of routes
+     */
+    private fun openRouteListFragment() {
+        // Opens the list of routes
+        if (supportFragmentManager.backStackEntryCount == 0) {
+
+            // Passes the points into the fragment
+            val listRouteFragment = ListRouteFragment()
+            val bundle = Bundle()
+            bundle.putSerializable("points", mMarkerManager.getPoints())
+            listRouteFragment.arguments = bundle
+
+            if (startButton.visibility == View.VISIBLE) fadeOut(startButton)
+            listOpened = true
+
+            // Animation for the list opening
+            supportFragmentManager.beginTransaction().apply {
+                setCustomAnimations(
+                    R.anim.enter_from_bottom,
+                    R.anim.exit_from_bottom,
+                    R.anim.enter_from_bottom,
+                    R.anim.exit_from_bottom
+                )
+                replace(R.id.flRouteList, listRouteFragment)
+                addToBackStack("open")
+                commit()
+            }
+        } else {
+            listOpened = false
+            supportFragmentManager.popBackStack()
+        }
+    }
+
+    /**
     Fades the given view out
     Input: View object to fade out
      */
@@ -190,7 +220,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         v.visibility = View.VISIBLE
     }
 
-    fun transitionToRunning() {
+    /**
+     Provides the necessary transition to start running
+     */
+    private fun transitionToRunning() {
 
         // Gets the views from the layout
         val startBlock = findViewById<View>(R.id.startBlock)

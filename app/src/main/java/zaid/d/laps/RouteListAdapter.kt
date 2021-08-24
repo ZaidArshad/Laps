@@ -43,9 +43,9 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
         val view = inflater.inflate(mResource, parent, false)
 
         // Sets the text views in the layout
-        val nameView = view.findViewById<TextView>(R.id.routeName)
-        val distanceView = view.findViewById<TextView>(R.id.routeLength)
-        val timeView = view.findViewById<TextView>(R.id.bestTime)
+        val nameView = view.findViewById<TextView>(R.id.routeNameEdit)
+        val distanceView = view.findViewById<TextView>(R.id.routeLengthText)
+        val timeView = view.findViewById<TextView>(R.id.timeRecordedText)
         distanceView.text = formattedLength
         nameView.text = name
         timeView.text = date

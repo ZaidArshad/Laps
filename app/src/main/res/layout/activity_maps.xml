@@ -24,6 +24,13 @@
         android:layout_marginLeft="20dp"
         />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/completedRunFragment"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        />
+
     <Button
         android:id="@+id/mainButton"
         android:layout_width="200dp"
@@ -31,7 +38,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_gravity="bottom | center"
+        android:layout_gravity="bottom|center"
         android:background="@drawable/ic_list_open_button"
         />
 
@@ -61,7 +68,7 @@
         android:shadowDy="0.5"
         android:visibility="invisible"
         android:textSize="60sp"
-        android:layout_gravity="top | center"
+        android:layout_gravity="top|center"
         android:layout_marginTop="150dp"
         />
 
@@ -77,7 +84,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_gravity="bottom | center"
+        android:layout_gravity="bottom|center"
         />
 
     <View

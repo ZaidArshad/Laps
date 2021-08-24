@@ -26,7 +26,6 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        super.onViewCreated(view, savedInstanceState)
         val listView = activity?.findViewById<ListView>(R.id.routeListView)
         val context = activity!!.applicationContext
 
@@ -61,6 +60,7 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
 
             // Starts drawing path and recording
             (activity as MapsActivity).fadeIn(activity!!.startButton)
+            (activity as MapsActivity).listOpened = false
 
             activity?.supportFragmentManager?.popBackStack()
         }

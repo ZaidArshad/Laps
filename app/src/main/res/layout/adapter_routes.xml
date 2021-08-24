@@ -8,7 +8,7 @@
     android:minHeight="100dp">
 
     <TextView
-        android:id="@+id/routeName"
+        android:id="@+id/routeNameEdit"
         android:text="@string/routeName"
         android:textSize="40sp"
         android:textColor="@color/colorPrimary"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/bestTime"
+        android:id="@+id/timeRecordedText"
         android:text="@string/bestTime"
         android:textSize="25sp"
         android:textColor="@color/orange"
@@ -29,11 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/routeName"
+        app:layout_constraintTop_toBottomOf="@+id/routeNameEdit"
         />
 
     <TextView
-        android:id="@+id/routeLength"
+        android:id="@+id/routeLengthText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
@@ -45,10 +45,10 @@
         android:shadowDy="0.5"
         android:textSize="32sp"
         android:layout_marginStart="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/bestTime"
+        app:layout_constraintBottom_toBottomOf="@+id/timeRecordedText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/routeName"
-        app:layout_constraintTop_toTopOf="@+id/routeName"/>
+        app:layout_constraintStart_toEndOf="@+id/routeNameEdit"
+        app:layout_constraintTop_toTopOf="@+id/routeNameEdit"/>
 
 
 
