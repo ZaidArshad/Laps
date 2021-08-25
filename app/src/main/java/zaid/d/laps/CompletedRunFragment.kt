@@ -1,14 +1,20 @@
 package zaid.d.laps
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.util.*
 
 class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
 
@@ -16,6 +22,7 @@ class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
     private lateinit var routeLengthText: TextView
     private lateinit var timeRecordedText: TextView
     private lateinit var confirmButton: Button
+    private lateinit var mContext: Context
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +36,11 @@ class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
         routeLengthText = view.findViewById(R.id.routeLengthText)
         timeRecordedText = view.findViewById(R.id.timeRecordedText)
         confirmButton = view.findViewById(R.id.confirmButton)
+        mContext = activity!!.applicationContext
 
         // Greys out the button
-        confirmButton.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.grey))
-        confirmButton.setTextColor(ContextCompat.getColor(activity!!.applicationContext, R.color.darkGrey))
+        confirmButton.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey))
+        confirmButton.setTextColor(ContextCompat.getColor(mContext, R.color.darkGrey))
 
         // Checks if the text box is filled out and lets the user press the button
         routeNameEdit.addTextChangedListener(object: TextWatcher {
@@ -49,8 +57,26 @@ class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
 
         })
 
-        // When the confirm button is clicked
+        // Getting the points of the path
+        var points = arguments?.getSerializable("points") as Array<LatLng>
+        points = ConversionsLocation.optimizeCords(points)
+        val length = (points.size).toString() + " M"
+
+        // Getting the time ran
+        val time = arguments?.getSerializable("time") as Long
+        val pattern = "H:mm:ss"
+        val simpleDateFormat = SimpleDateFormat(pattern, Locale.CANADA)
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT")
+        var timeRan = simpleDateFormat.format(time)
+        timeRan = "Time: $timeRan"
+
+        // Setting the layout objects
+        routeLengthText.text = length
+        timeRecordedText.text = timeRan
+
+        // When the confirm button is clicked save the route and close fragment
         confirmButton.setOnClickListener() {
+            PointsFile.savePoints(mContext, routeNameEdit.text.toString(), time, points)
             activity?.supportFragmentManager?.popBackStack()
         }
     }
@@ -63,12 +89,12 @@ class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
         confirmButton.isClickable = status
 
         if (status) {
-            confirmButton.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorPrimary))
-            confirmButton.setTextColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorAccent))
+            confirmButton.setBackgroundColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
+            confirmButton.setTextColor(ContextCompat.getColor(mContext, R.color.colorAccent))
         }
         else {
-            confirmButton.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.grey))
-            confirmButton.setTextColor(ContextCompat.getColor(activity!!.applicationContext, R.color.darkGrey))
+            confirmButton.setBackgroundColor(ContextCompat.getColor(mContext, R.color.grey))
+            confirmButton.setTextColor(ContextCompat.getColor(mContext, R.color.darkGrey))
         }
     }
 }

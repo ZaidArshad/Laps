@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.PolylineOptions
          distance: Length of the route in meters
          points: Points of the users location
  */
-class Route(routeNum : Int, routeName: String, time: Long, distance: Int, points : Array<LatLng>) {
+class Route(routeNum: Int, routeName: String, time: Long, distance: Int, points: Array<LatLng>) {
     private val mRouteNum =  routeNum
     private val mPoints = points
     private val mDistance = distance

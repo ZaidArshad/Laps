@@ -2,10 +2,8 @@ package zaid.d.laps
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
-import org.json.JSONObject
 import java.io.*
 
 object PointsFile {

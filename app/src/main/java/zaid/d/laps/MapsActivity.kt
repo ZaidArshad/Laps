@@ -88,26 +88,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeIn(mainButton)
             fadeOut(chronometer)
             fadeOut(finishButton)
-
-            // Passes the points into the fragment
-            val completedRunFragment = CompletedRunFragment()
-            val bundle = Bundle()
-            bundle.putSerializable("points", mMarkerManager.getPoints())
-            completedRunFragment.arguments = bundle
-
-            // Animation for the list opening
-            supportFragmentManager.beginTransaction().apply {
-                setCustomAnimations(
-                    R.anim.enter_from_bottom,
-                    R.anim.exit_from_bottom,
-                    R.anim.enter_from_bottom,
-                    R.anim.exit_from_bottom
-                )
-                replace(R.id.completedRunFragment, completedRunFragment)
-                addToBackStack("open")
-                commit()
-            }
-
+            openCompletedRunFragment()
         }
 
         // Main Button
@@ -175,9 +156,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             // Passes the points into the fragment
             val listRouteFragment = ListRouteFragment()
-            val bundle = Bundle()
-            bundle.putSerializable("points", mMarkerManager.getPoints())
-            listRouteFragment.arguments = bundle
 
             if (startButton.visibility == View.VISIBLE) fadeOut(startButton)
             listOpened = true
@@ -197,6 +175,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             listOpened = false
             supportFragmentManager.popBackStack()
+        }
+    }
+
+    /**
+    Opens the fragment to set the name of the just finished run
+    as well as details of the distance and time ran
+     */
+    private fun openCompletedRunFragment() {
+        // Passes the points into the fragment
+        val completedRunFragment = CompletedRunFragment()
+        val bundle = Bundle()
+        bundle.putSerializable("points", mMarkerManager.getPoints())
+        bundle.putSerializable("time", SystemClock.elapsedRealtime()-chronometer.base)
+        completedRunFragment.arguments = bundle
+
+        // Animation for the list opening
+        supportFragmentManager.beginTransaction().apply {
+            setCustomAnimations(
+                R.anim.enter_from_bottom,
+                R.anim.exit_from_bottom,
+                R.anim.enter_from_bottom,
+                R.anim.exit_from_bottom
+            )
+            replace(R.id.completedRunFragment, completedRunFragment)
+            addToBackStack("open")
+            commit()
         }
     }
 

@@ -55,8 +55,6 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
 
         // Create record new route button click
         addButton.setOnClickListener {
-            // val points = arguments?.getSerializable("points") as Array<LatLng>
-            // PointsFile.savePoints(context, "testing", System.currentTimeMillis(),ConversionsLocation.optimizeCords(points))
 
             // Starts drawing path and recording
             (activity as MapsActivity).fadeIn(activity!!.startButton)
