@@ -19,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.util.*
 
@@ -109,6 +110,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
         mMap.isBuildingsEnabled = false
         mMap.isMyLocationEnabled = true
+        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.styled_map))
 
         // Sets up the marker on the map
         DrawingManagement.setDrawing(this, false)

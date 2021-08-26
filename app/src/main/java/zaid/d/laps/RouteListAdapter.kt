@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.google.android.gms.maps.model.LatLng
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
@@ -52,7 +53,6 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
         timeView.text = date
 
         view.setOnClickListener() {
-            Log.d("clicked", date)
         }
 
         return view

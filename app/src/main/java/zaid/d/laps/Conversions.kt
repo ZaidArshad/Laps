@@ -18,8 +18,10 @@ object ConversionsLocation {
         val optimized = mutableListOf<LatLng>()
         var lastPoint = LatLng(0.0,0.0)
         for (point in points) {
-            if (isGapReached(lastPoint, point)) optimized.add(point)
-            lastPoint = point
+            if (isGapReached(lastPoint, point))  {
+                optimized.add(point)
+                lastPoint = point
+            }
         }
         return optimized.toTypedArray()
     }
