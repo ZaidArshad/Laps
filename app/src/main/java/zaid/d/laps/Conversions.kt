@@ -2,6 +2,7 @@ package zaid.d.laps
 
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import kotlin.math.sqrt
 
 object ConversionsLocation {
@@ -14,6 +15,36 @@ object ConversionsLocation {
         return LatLng(location.latitude, location.longitude)
     }
 
+    /**
+    Gets the 2 most extreme points of the given array
+    Input: points: LatLng array made up of a route
+    Output: Bounds of the given array
+     */
+    fun getBounds(points: Array<LatLng>): LatLngBounds {
+
+        // Setting up variables
+        var northEast = points.last()
+        var southWest = points.first()
+
+        // Comparing with the extreme points
+        for (point in points) {
+            if (getLatLongSum(point) > getLatLongSum(northEast)) northEast = point
+            else if (getLatLongSum(point) < getLatLongSum(southWest)) southWest = point
+        }
+
+        // Sets the bounds
+        return LatLngBounds(southWest, northEast)
+    }
+
+    private fun getLatLongSum(point: LatLng): Double {
+        return point.latitude + point.longitude
+    }
+
+    /**
+     Cuts down the amount of points in the inputted array
+     Input: points: The array of LatLng points to be optimized
+     Output: The optimized array
+     */
     fun optimizeCords(points: Array<LatLng>): Array<LatLng> {
         val optimized = mutableListOf<LatLng>()
         var lastPoint = LatLng(0.0,0.0)

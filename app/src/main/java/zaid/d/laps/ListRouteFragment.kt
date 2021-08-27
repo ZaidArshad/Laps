@@ -49,7 +49,7 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
         listView?.addFooterView(addButton)
 
         // Creates the list of the items
-        val routeListAdapter = RouteListAdapter(context, R.layout.adapter_routes, routeList)
+        val routeListAdapter = RouteListAdapter(context, R.layout.adapter_routes, routeList, (activity as MapsActivity))
         listView?.adapter = routeListAdapter
         listView?.isClickable = true
 

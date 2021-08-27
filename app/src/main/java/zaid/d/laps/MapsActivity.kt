@@ -26,7 +26,7 @@ import java.util.*
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var mMap: GoogleMap
+    lateinit var mMap: GoogleMap
     private var isMapReady = false
     private lateinit var mMarkerManager: MarkerManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -89,7 +89,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeIn(mainButton)
             fadeOut(chronometer)
             fadeOut(finishButton)
-            openCompletedRunFragment()
+            
+            if (mMarkerManager.getPoints().size > 2) openCompletedRunFragment()
+
         }
 
         // Main Button

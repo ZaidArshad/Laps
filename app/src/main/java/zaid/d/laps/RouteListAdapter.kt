@@ -1,6 +1,7 @@
 package zaid.d.laps
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,14 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.PolylineOptions
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route>) :
+class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route>, activity: MapsActivity) :
     ArrayAdapter<Route>(
         context,
         resource,
@@ -24,6 +31,7 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
     private val TAG = "RouteListAdapter"
     private val mContext = context
     private val mResource = resource
+    private val mActivity = activity
 
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -53,6 +61,17 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
         timeView.text = date
 
         view.setOnClickListener() {
+            val lineDetails = PolylineOptions()
+            val points = getItem(position)!!.getPoints()
+            val polyline = mActivity.mMap.addPolyline(lineDetails)
+            polyline.points = points.toMutableList()
+
+            val bounds = ConversionsLocation.getBounds(points)
+            mActivity.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+            mActivity.listOpened = false
+
+
+            mActivity.supportFragmentManager.popBackStack()
         }
 
         return view

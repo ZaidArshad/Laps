@@ -77,11 +77,13 @@ class MarkerManager(context: Context, map: GoogleMap) {
             // Sets the final location to the exact spot
             personMarker.position = ConversionsLocation.getCords(nextPosition)
 
-            val cam = CameraPosition.Builder()
-                .bearing(nextPosition.bearing)
-                .zoom(ConstantsZoom.MAIN_ZOOM)
-                .target(ConversionsLocation.getCords(nextPosition))
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam.build()))
+            if (draw) {
+                val cam = CameraPosition.Builder()
+                    .bearing(nextPosition.bearing)
+                    .zoom(ConstantsZoom.MAIN_ZOOM)
+                    .target(ConversionsLocation.getCords(nextPosition))
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam.build()))
+            }
 
             return nextPosition
         }
