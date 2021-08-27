@@ -3,10 +3,11 @@ package zaid.d.laps
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.os.SystemClock
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.DragEvent.ACTION_DRAG_STARTED
+import android.view.DragEvent.ACTION_DROP
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
@@ -21,6 +22,7 @@ import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.properties.Delegates
 
 class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route>, activity: MapsActivity) :
     ArrayAdapter<Route>(
@@ -32,8 +34,9 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
     private val mContext = context
     private val mResource = resource
     private val mActivity = activity
+    private var time = SystemClock.elapsedRealtime()
 
-    @SuppressLint("ViewHolder")
+    @SuppressLint("ViewHolder", "ClickableViewAccessibility")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
         // Sets the attributes for each route object
@@ -61,15 +64,28 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
         timeView.text = date
 
         view.setOnClickListener() {
+
+            // Clear map and draw current route
+            mActivity.mMap.clear()
+            mActivity.mMarkerManager.drawMarker()
             val lineDetails = PolylineOptions()
             val points = getItem(position)!!.getPoints()
             val polyline = mActivity.mMap.addPolyline(lineDetails)
             polyline.points = points.toMutableList()
 
-            val bounds = ConversionsLocation.getBounds(points)
-            mActivity.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+
+
+            // Camera to current route
+            if (points.size > 2) {
+                val bounds = ConversionsLocation.getBounds(points)
+                mActivity.mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100))
+            }
+
+            mActivity.fadeIn(mActivity.deleteButton)
+            mActivity.fadeIn(mActivity.startButton)
             mActivity.listOpened = false
 
+            mActivity.currentRouteFile = getItem(position)!!.getFileName()
 
             mActivity.supportFragmentManager.popBackStack()
         }

@@ -54,10 +54,10 @@ object PointsFile {
     Input: context: Context of the current activity
     Output: An array of LatLng objects of the saved points
      */
-    fun readPoints(context : Context, routeNum : Int): Route {
+    fun readPoints(context: Context, fileName: String): Route {
+        Log.d("Reading", fileName)
 
         // Opens the file stream
-        val fileName = routeNum.toString() + "path.json"
         val inputStream = context.openFileInput(fileName)
         val inputStreamReader = InputStreamReader(inputStream)
         val bufferedReader = BufferedReader(inputStreamReader)
@@ -79,7 +79,7 @@ object PointsFile {
                 }
             }
         }
-        return Route(routeNum, routeName, time, points.size, points.toTypedArray())
+        return Route(fileName, routeName, time, points.size, points.toTypedArray())
     }
 
     /**
@@ -130,27 +130,40 @@ object PointsFile {
     Input: context: Context of the activity
            fileName: Name of the .json file
      */
+
     private fun addFile(context: Context, fileName: String) {
-        Log.d("fileName", fileName)
+        Log.d("added", fileName)
+        val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        val fileNamesSet = getFileNames(context)
+        val set = fileNamesSet.toMutableSet()
+
+
+        // Creates a new set if it's empty
+        set.add(fileName)
+
+        // Puts in the new set
+        editor.putStringSet(Strings.FILENAME_SET, set)
+        editor.apply()
+    }
+
+    fun deleteFile(context: Context, fileName: String) {
+        Log.d("deleted", fileName)
         val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
         val editor = sharedPref.edit()
         val fileNamesSet = sharedPref.getStringSet(Strings.FILENAME_SET, null)
-        var set = mutableSetOf<String>()
+        val set = fileNamesSet?.toMutableSet()
 
-        // Creates a new set if it's empty
-        if (fileNamesSet == null) set.add(fileName)
-        else if (fileName == "1path.json") set.add(fileName)
+        // Deletes the file in the set
+        if (fileNamesSet != null) {
+            val file = File(context.filesDir,fileName)
+            file.delete()
 
-        // Add filename to preexisting set if not already in
-        else if (fileName !in fileNamesSet) {
-            fileNamesSet.add(fileName)
-            set = fileNamesSet
+            set?.remove(fileName)
+            editor.putStringSet(Strings.FILENAME_SET, set)
+            editor.apply()
         }
 
-        // Puts in the new set
-        editor.clear()
-        editor.putStringSet(Strings.FILENAME_SET, set)
-        editor.apply()
     }
 
     /**
@@ -161,7 +174,7 @@ object PointsFile {
     fun getFileNames(context: Context): Array<String> {
         val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
         val fileNames = sharedPref.getStringSet(Strings.FILENAME_SET, null)
-        if (fileNames != null) return fileNames.toTypedArray()
+        if (fileNames != null && fileNames.size != 0) return fileNames.toTypedArray()
         else return arrayOf("nothing")
     }
 }

@@ -19,6 +19,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.util.*
@@ -28,15 +30,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     lateinit var mMap: GoogleMap
     private var isMapReady = false
-    private lateinit var mMarkerManager: MarkerManager
+    lateinit var mMarkerManager: MarkerManager
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var startLocation: Location
 
     private lateinit var mainButton: Button
-    var listOpened = false
-
     lateinit var startButton: Button
     lateinit var finishButton: Button
+    lateinit var deleteButton: Button
+
+    var listOpened = false
+    lateinit var currentRouteFile: String
+
     private lateinit var chronometer: Chronometer
 
     private var updateHandler = Handler()
@@ -65,6 +70,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mainButton = findViewById(R.id.mainButton)
         startButton = findViewById(R.id.startButton)
         finishButton = findViewById(R.id.finishButton)
+        deleteButton = findViewById(R.id.deleteButton)
         chronometer = findViewById(R.id.chronometer)
 
         waitForMap()
@@ -78,8 +84,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // When the user wants to start running
         startButton.setOnClickListener() {
             DrawingManagement.setDrawing(this, true) // Cursor leaves trail
+            if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
             fadeOut(startButton)
             fadeOut(mainButton)
+//            val points = mutableListOf<LatLng>(LatLng(0.0, 0.0), LatLng(1.0, 1.0), LatLng(2.0, 2.0))
+//            PointsFile.savePoints(this, "test", 0, points.toTypedArray())
             transitionToRunning()
         }
 
@@ -94,8 +103,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
+        deleteButton.setOnClickListener() {
+            fadeOut(deleteButton)
+            fadeOut(startButton)
+            mMap.clear()
+            mMarkerManager.drawMarker()
+            PointsFile.deleteFile(this, currentRouteFile)
+        }
+
         // Main Button
         mainButton.setOnClickListener() {
+            if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
             openRouteListFragment()
         }
     }

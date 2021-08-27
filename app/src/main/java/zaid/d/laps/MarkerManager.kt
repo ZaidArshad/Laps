@@ -110,11 +110,20 @@ class MarkerManager(context: Context, map: GoogleMap) {
         plotMarkerOnCurrentLocation()
     }
 
+    fun drawMarker() {
+        val myPersonIcon = AppCompatResources.getDrawable(
+            mContext, R.drawable.ic_usermarkerslimborderless)!!.toBitmap()
+        myPerson.icon(BitmapDescriptorFactory.fromBitmap(myPersonIcon))
+
+        // Puts the created marker on map
+        personMarker = mMap.addMarker(myPerson)!!
+    }
+
     /**
     Updates the marker's location on the map when called
      */
     @SuppressLint("MissingPermission")
-    private fun plotMarkerOnCurrentLocation() {
+    fun plotMarkerOnCurrentLocation() {
 
         // Gets the current location
         PermissionsLocation.locationPermissionCheck(mContext)

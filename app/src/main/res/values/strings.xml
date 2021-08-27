@@ -13,7 +13,7 @@
     <string name="_2_3_km">2.30 KM</string>
     <string name="add">add</string>
     <string name="back"><![CDATA[<-]]></string>
-    <string name="record_new_route">Record New Route</string>
+    <string name="record_new_route">RECORD NEW ROUTE</string>
     <string name="start">Start</string>
     <string name="zeroTimer">0:00</string>
     <string name="finish">Finish</string>
@@ -22,4 +22,5 @@
     <string name="confirm">Confirm</string>
     <string name="timeRecorded">Time: 17:00</string>
     <string name="_2300_m">2300 M</string>
+    <string name="delete">Delete</string>
 </resources>
