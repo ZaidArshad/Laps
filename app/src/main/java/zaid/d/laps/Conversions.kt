@@ -47,7 +47,8 @@ object ConversionsLocation {
      */
     fun optimizeCords(points: Array<LatLng>): Array<LatLng> {
         val optimized = mutableListOf<LatLng>()
-        var lastPoint = LatLng(0.0,0.0)
+        optimized.add(points[0])
+        var lastPoint = points[0]
         for (point in points) {
             if (isGapReached(lastPoint, point))  {
                 optimized.add(point)

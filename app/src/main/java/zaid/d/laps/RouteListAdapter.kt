@@ -34,7 +34,6 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
     private val mContext = context
     private val mResource = resource
     private val mActivity = activity
-    private var time = SystemClock.elapsedRealtime()
 
     @SuppressLint("ViewHolder", "ClickableViewAccessibility")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

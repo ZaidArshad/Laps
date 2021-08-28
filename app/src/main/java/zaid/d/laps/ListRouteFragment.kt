@@ -28,9 +28,9 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
         // If there are files to read, read them
         for (fileName in items) {
             if (fileName == "nothing") {
-                Log.d("why", "why")
                 break
             }
+            Log.d("loaded", fileName)
             routeList.add(PointsFile.readPoints(context, fileName))
         }
 

@@ -87,8 +87,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
             fadeOut(startButton)
             fadeOut(mainButton)
-//            val points = mutableListOf<LatLng>(LatLng(0.0, 0.0), LatLng(1.0, 1.0), LatLng(2.0, 2.0))
-//            PointsFile.savePoints(this, "test", 0, points.toTypedArray())
             transitionToRunning()
         }
 
@@ -98,6 +96,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeIn(mainButton)
             fadeOut(chronometer)
             fadeOut(finishButton)
+
+            val p = 30.0
+            val points = mutableListOf<LatLng>(LatLng(p, p), LatLng(p+1, p+1), LatLng(p+2, p+2))
+            PointsFile.savePoints(this, "test", 0, points.toTypedArray())
             
             if (mMarkerManager.getPoints().size > 2) openCompletedRunFragment()
 
@@ -146,7 +148,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         updateHandler.postDelayed(object: Runnable {
             override fun run() {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    oldPosition = mMarkerManager.interpolateMarker(oldPosition, location!!, DrawingManagement.getDrawing(this@MapsActivity))
+                    if (location != null)
+                        oldPosition = mMarkerManager.interpolateMarker(oldPosition, location, DrawingManagement.getDrawing(this@MapsActivity))
                 }
                 updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
             }

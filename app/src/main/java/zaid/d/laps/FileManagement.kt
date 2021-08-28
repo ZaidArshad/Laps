@@ -9,7 +9,7 @@ import java.io.*
 object PointsFile {
 
     /**
-    Saves the given points into paths.json
+    Saves the given points into paths.txt
     Input: context: Context of the activity
            routeName: Name of the route
            points: Array of the cords
@@ -17,40 +17,39 @@ object PointsFile {
      */
     fun savePoints(context : Context, routeName: String, bestTime: Long, points : Array<LatLng>) {
 
-        val fileName: String
-        val numOfFiles: Int
-
-        // Creates a file if there is not one
-        if (getFileNames(context)[0] == "nothing") {
-            fileName = "1path.json"
-            addFile(context, "1path.json")
-            numOfFiles = 1
-        }
-        // If there is already a file
-        else {
-            numOfFiles = getFileNames(context).size + 1
-            fileName = numOfFiles.toString() + "path.json"
-            addFile(context, fileName)
-        }
+        // Gets a unique file ID
+        val fileID = getNewFileID(context)
+        val fileName = fileID.toString() + "path.txt"
+        addFile(context, fileName)
 
         // Setting up to write the file
         val outputStream = context.openFileOutput(fileName, MODE_PRIVATE)
         val outputStreamWriter = OutputStreamWriter(outputStream)
 
-        // Writes file num and routeName
-        outputStreamWriter.write("$numOfFiles,$routeName,$bestTime\n")
+        // Writes file id and routeName
+        outputStreamWriter.write("$fileID,$routeName,$bestTime\n")
 
         // Writes the points in format "Lat,Long"
         for (point in points) {
-            val cords = (point.longitude.toString() + "," + point.longitude.toString() + "\n")
+            val cords = (point.latitude.toString() + "," + point.longitude.toString() + "\n")
             outputStreamWriter.write(cords)
         }
+
+//        var stringOfPoints = ""
+//        var lat = ""
+//        var long = ""
+//        for (point in points) {
+//            lat = point.latitude.toString()
+//            long = point.longitude.toString()
+//            stringOfPoints += "($lat + , $long) "
+//        }
+//        Log.d("Saved: ", stringOfPoints)
 
         outputStreamWriter.close()
     }
 
     /**
-    Gets the saved points from paths.json
+    Gets the saved points from paths.txt
     Input: context: Context of the current activity
     Output: An array of LatLng objects of the saved points
      */
@@ -79,6 +78,18 @@ object PointsFile {
                 }
             }
         }
+
+//        TEMP
+//        var stringOfPoints = ""
+//        var lat = ""
+//        var long = ""
+//        for (point in points) {
+//            lat = point.latitude.toString()
+//            long = point.longitude.toString()
+//            stringOfPoints += "($lat + , $long) "
+//        }
+//        Log.d("Read: ", stringOfPoints)
+
         return Route(fileName, routeName, time, points.size, points.toTypedArray())
     }
 
@@ -126,21 +137,19 @@ object PointsFile {
     }
 
     /**
-    Adds a json file to the file name set in shared prefs
+    Adds a txt file to the file name set in shared prefs
     Input: context: Context of the activity
-           fileName: Name of the .json file
+           fileName: Name of the .txt file
      */
-
     private fun addFile(context: Context, fileName: String) {
-        Log.d("added", fileName)
+        Log.d("adding", fileName)
         val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
         val editor = sharedPref.edit()
         val fileNamesSet = getFileNames(context)
         val set = fileNamesSet.toMutableSet()
 
-
         // Creates a new set if it's empty
-        set.add(fileName)
+        Log.d("added:", set.add(fileName).toString())
 
         // Puts in the new set
         editor.putStringSet(Strings.FILENAME_SET, set)
@@ -148,7 +157,7 @@ object PointsFile {
     }
 
     fun deleteFile(context: Context, fileName: String) {
-        Log.d("deleted", fileName)
+        Log.d("deleting", fileName)
         val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
         val editor = sharedPref.edit()
         val fileNamesSet = sharedPref.getStringSet(Strings.FILENAME_SET, null)
@@ -157,9 +166,8 @@ object PointsFile {
         // Deletes the file in the set
         if (fileNamesSet != null) {
             val file = File(context.filesDir,fileName)
-            file.delete()
-
-            set?.remove(fileName)
+            Log.d("deleted txt:", file.delete().toString())
+            Log.d("deleted fileName:", set?.remove(fileName).toString())
             editor.putStringSet(Strings.FILENAME_SET, set)
             editor.apply()
         }
@@ -176,6 +184,24 @@ object PointsFile {
         val fileNames = sharedPref.getStringSet(Strings.FILENAME_SET, null)
         if (fileNames != null && fileNames.size != 0) return fileNames.toTypedArray()
         else return arrayOf("nothing")
+    }
+
+    /**
+    Gets the file ID for the next file
+    Input: context: Context of the activity
+    Output: Id of the next file
+     */
+    private fun getNewFileID(context: Context): Int {
+
+        // Gets the id from shared prefs
+        val sharedPref = context.getSharedPreferences(Strings.SHARED_PREFS, MODE_PRIVATE)
+        val id = sharedPref.getInt(Strings.FILE_NAME_ID, 0)
+
+        // Returns new id and ready new one
+        val editor = sharedPref.edit()
+        editor.putInt(Strings.FILE_NAME_ID, id+1)
+        editor.apply()
+        return id
     }
 }
 
