@@ -72,8 +72,6 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
             val polyline = mActivity.mMap.addPolyline(lineDetails)
             polyline.points = points.toMutableList()
 
-
-
             // Camera to current route
             if (points.size > 2) {
                 val bounds = ConversionsLocation.getBounds(points)
@@ -83,6 +81,7 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
             mActivity.fadeIn(mActivity.deleteButton)
             mActivity.fadeIn(mActivity.startButton)
             mActivity.listOpened = false
+            mActivity.isCameraMoving = false
 
             mActivity.currentRouteFile = getItem(position)!!.getFileName()
 

@@ -29,10 +29,11 @@ class MarkerManager(context: Context, map: GoogleMap) {
     Smoothly adjusts the marker to a new location
     Input: oldPosition: The position prior to the position update
            nextPosition: The position after the position update
-           draw: The
+           draw: Whether the trail is to be drawn
+           adjustCam: Whether the camera should be adjusted on every movement
     Output: The location of the where the marker has moved to
      */
-    fun interpolateMarker(oldPosition: Location,nextPosition: Location, draw: Boolean): Location {
+    fun interpolateMarker(oldPosition: Location,nextPosition: Location, draw: Boolean, adjustCam: Boolean): Location {
 
         // Starting position
         var lat = oldPosition.latitude
@@ -77,13 +78,14 @@ class MarkerManager(context: Context, map: GoogleMap) {
             // Sets the final location to the exact spot
             personMarker.position = ConversionsLocation.getCords(nextPosition)
 
-            if (draw) {
+            if (adjustCam) {
                 val cam = CameraPosition.Builder()
                     .bearing(nextPosition.bearing)
                     .zoom(ConstantsZoom.MAIN_ZOOM)
                     .target(ConversionsLocation.getCords(nextPosition))
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam.build()))
             }
+
 
             return nextPosition
         }

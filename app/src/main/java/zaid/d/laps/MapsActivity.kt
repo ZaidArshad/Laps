@@ -19,8 +19,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 import java.util.*
@@ -40,6 +38,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var deleteButton: Button
 
     var listOpened = false
+    var isRecordingNewRoute = false
+    var isCameraMoving = true
     lateinit var currentRouteFile: String
 
     private lateinit var chronometer: Chronometer
@@ -83,11 +83,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // When the user wants to start running
         startButton.setOnClickListener() {
-            DrawingManagement.setDrawing(this, true) // Cursor leaves trail
+            if (isRecordingNewRoute) DrawingManagement.setDrawing(this, true) // Cursor leaves trail
             if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
             fadeOut(startButton)
             fadeOut(mainButton)
             transitionToRunning()
+            mMarkerManager.plotMarkerOnCurrentLocation()
         }
 
         // When the user wants to finish running
@@ -97,11 +98,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeOut(chronometer)
             fadeOut(finishButton)
 
-            val p = 30.0
-            val points = mutableListOf<LatLng>(LatLng(p, p), LatLng(p+1, p+1), LatLng(p+2, p+2))
-            PointsFile.savePoints(this, "test", 0, points.toTypedArray())
-            
+            // Saves the route if it only has more than 2 points
             if (mMarkerManager.getPoints().size > 2) openCompletedRunFragment()
+            isRecordingNewRoute = false
 
         }
 
@@ -149,7 +148,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun run() {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                     if (location != null)
-                        oldPosition = mMarkerManager.interpolateMarker(oldPosition, location, DrawingManagement.getDrawing(this@MapsActivity))
+                        oldPosition = mMarkerManager.interpolateMarker(
+                            oldPosition, location, DrawingManagement.getDrawing(this@MapsActivity), isCameraMoving)
                 }
                 updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
             }
@@ -284,6 +284,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     fadeOut(startBlockNum)
                     fadeIn(chronometer)
                     fadeIn(finishButton)
+
                     chronometer.base = SystemClock.elapsedRealtime()
                     chronometer.start()
                 }

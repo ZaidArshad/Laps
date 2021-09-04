@@ -55,6 +55,7 @@ class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
             // Starts drawing path and recording
             (activity as MapsActivity).fadeIn(activity!!.startButton)
             (activity as MapsActivity).listOpened = false
+            (activity as MapsActivity).isRecordingNewRoute = true
 
             activity?.supportFragmentManager?.popBackStack()
         }

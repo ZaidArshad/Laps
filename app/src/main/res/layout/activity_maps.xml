@@ -24,36 +24,27 @@
         android:layout_marginLeft="20dp"
         />
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/completedRunFragment"
-        android:layout_width="300dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
+    <View
+        android:id="@+id/startBlock"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:visibility="invisible"
         />
 
     <Button
-        android:id="@+id/mainButton"
+        android:id="@+id/deleteButton"
+        android:text="@string/delete"
+        android:visibility="invisible"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="bottom|center"
-        android:background="@drawable/ic_list_open_button"
-        />
-
-    <Button
-        android:id="@+id/startButton"
-        android:text="@string/start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
         android:textColor="@color/colorAccent"
         android:background="@color/colorPrimary"
         android:textSize="30sp"
-        android:paddingStart="50dp"
-        android:paddingEnd="50dp"
-        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="top|center"
         />
 
     <Chronometer
@@ -72,6 +63,50 @@
         android:layout_marginTop="150dp"
         />
 
+    <TextView
+        android:id="@+id/startBlockNums"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="100sp"
+        android:fontFamily="@font/callista_regular"
+        android:text="@string/none"
+        android:visibility="invisible"
+        android:textColor="@color/white"
+        android:layout_gravity="center"
+        />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/completedRunFragment"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        />
+
+    <Button
+        android:id="@+id/startButton"
+        android:text="@string/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:textColor="@color/colorAccent"
+        android:background="@color/colorPrimary"
+        android:textSize="30sp"
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp"
+        android:layout_gravity="center"
+        />
+
+    <Button
+        android:id="@+id/mainButton"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/ic_list_open_button"
+        />
+
     <Button
         android:id="@+id/finishButton"
         android:text="@string/finish"
@@ -85,42 +120,6 @@
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
         android:layout_gravity="bottom|center"
-        />
-
-    <View
-        android:id="@+id/startBlock"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        android:visibility="invisible"
-        />
-
-    <TextView
-        android:id="@+id/startBlockNums"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="100sp"
-        android:fontFamily="@font/callista_regular"
-        android:text="@string/none"
-        android:visibility="invisible"
-        android:textColor="@color/white"
-        android:layout_gravity="center"
-        />
-
-
-    <Button
-        android:id="@+id/deleteButton"
-        android:text="@string/delete"
-        android:visibility="invisible"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:textColor="@color/colorAccent"
-        android:background="@color/colorPrimary"
-        android:textSize="30sp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="top|center"
         />
     
 </FrameLayout>
