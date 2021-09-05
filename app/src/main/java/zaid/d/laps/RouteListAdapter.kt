@@ -70,6 +70,8 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
             val lineDetails = PolylineOptions()
             val points = getItem(position)!!.getPoints()
             val polyline = mActivity.mMap.addPolyline(lineDetails)
+            polyline.width = ConstantsLine.LINE_WIDTH
+            polyline.isGeodesic = false
             polyline.points = points.toMutableList()
 
             // Camera to current route

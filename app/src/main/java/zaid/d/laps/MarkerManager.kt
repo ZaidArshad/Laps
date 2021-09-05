@@ -4,14 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.os.Handler
-import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
-import kotlin.math.sqrt
 
 /**
 Class to manage the Marker() object on the google maps fragment
@@ -40,6 +38,7 @@ class MarkerManager(context: Context, map: GoogleMap) {
         var long = oldPosition.longitude
         val lineDetails = PolylineOptions()
         val polyline = mMap.addPolyline(lineDetails)
+        polyline.width = ConstantsLine.LINE_WIDTH
 
         // Rotation
         val dRotation = equivalentAngle(nextPosition.bearing-oldPosition.bearing) / ConstantsTime.FRAME_CAP

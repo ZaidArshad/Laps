@@ -15,6 +15,10 @@ object ConstantsDistance {
     const val MIN_GAP = 0.00005
 }
 
+object ConstantsLine {
+    const val LINE_WIDTH = 10F
+}
+
 object Strings {
     const val SHARED_PREFS = "sharedPrefs"
     const val FILENAME_SET = "txtFiles"

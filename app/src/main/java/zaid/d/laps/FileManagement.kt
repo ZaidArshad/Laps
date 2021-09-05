@@ -15,7 +15,7 @@ object PointsFile {
            points: Array of the cords
     Output: none
      */
-    fun savePoints(context : Context, routeName: String, bestTime: Long, points : Array<LatLng>) {
+    fun savePoints(context: Context, routeName: String, bestTime: Long, points : Array<LatLng>) {
 
         // Gets a unique file ID
         val fileID = getNewFileID(context)
@@ -35,22 +35,14 @@ object PointsFile {
             outputStreamWriter.write(cords)
         }
 
-//        var stringOfPoints = ""
-//        var lat = ""
-//        var long = ""
-//        for (point in points) {
-//            lat = point.latitude.toString()
-//            long = point.longitude.toString()
-//            stringOfPoints += "($lat + , $long) "
-//        }
-//        Log.d("Saved: ", stringOfPoints)
-
         outputStreamWriter.close()
+
     }
 
     /**
     Gets the saved points from paths.txt
     Input: context: Context of the current activity
+           fileName: Name of the file to be read
     Output: An array of LatLng objects of the saved points
      */
     fun readPoints(context: Context, fileName: String): Route {
@@ -79,19 +71,68 @@ object PointsFile {
             }
         }
 
-//        TEMP
-//        var stringOfPoints = ""
-//        var lat = ""
-//        var long = ""
-//        for (point in points) {
-//            lat = point.latitude.toString()
-//            long = point.longitude.toString()
-//            stringOfPoints += "($lat + , $long) "
-//        }
-//        Log.d("Read: ", stringOfPoints)
-
         return Route(fileName, routeName, time, points.size, points.toTypedArray())
     }
+
+
+    /**
+    Saves a new time if it is better than the previous run time
+    Input: context: Context of the current activity
+           fileName: Name of the file to be read
+           currentTime: The time of the current run
+    Output: Boolean of whether the file gets overwrote
+     */
+    fun saveBestTime(context: Context, fileName: String, currentTime: Long): Boolean {
+
+        // Opens the file stream
+        val inputStream = context.openFileInput(fileName)
+        val inputStreamReader = InputStreamReader(inputStream)
+        val bufferedReader = BufferedReader(inputStreamReader)
+
+        // First line: {num, name, time}
+        val firstLine = tokenizeFirstLine(bufferedReader.readLine())
+        val routeID = firstLine[0]
+        val routeName = firstLine[1]
+        val previousTime = firstLine[2].toLong()
+
+        // Overwrites the file with the new time if it is better
+        if (currentTime < previousTime) {
+
+            // Starts writing to file
+            val outputStream = context.openFileOutput(fileName, MODE_PRIVATE)
+            val outputStreamWriter = OutputStreamWriter(outputStream)
+
+            // Writes file id and routeName
+            outputStreamWriter.write("$routeID,$routeName,$currentTime\n")
+
+            // Tool to write the cords into
+            val points = mutableListOf<LatLng>()
+            var reading = true
+
+            // Reading the points
+            while (reading) {
+                when (val cords = bufferedReader.readLine()) {
+                    null -> reading = false
+                    else -> {
+                        points.add(tokenizePoint(cords))
+                    }
+                }
+            }
+
+            // Writes the points
+            for (point in points) {
+                val cords = (point.latitude.toString() + "," + point.longitude.toString() + "\n")
+                outputStreamWriter.write(cords)
+            }
+
+            outputStreamWriter.close()
+            return true
+        }
+        return false
+
+    }
+
+
 
     /**
     Converts given string to LatLng object
@@ -109,6 +150,20 @@ object PointsFile {
             else lat += c
         }
         return LatLng(lat.toDouble(), long.toDouble())
+    }
+
+    /**
+    Extracts the numbers in the beginning of the given string
+    Input: fileName: The name of the file to get the ID from
+    Output: The beginning few digits of the file name
+     */
+    private fun tokenizeFileID(fileName: String): String {
+        var fileID = ""
+
+        // Gets the numbers in the beginning of the file name
+        for (c in fileName) if (c.isDigit()) fileID += c
+
+        return fileID
     }
 
     /**

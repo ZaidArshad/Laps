@@ -40,6 +40,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var listOpened = false
     var isRecordingNewRoute = false
     var isCameraMoving = true
+    var recordedTime: Long = 0
     lateinit var currentRouteFile: String
 
     private lateinit var chronometer: Chronometer
@@ -98,10 +99,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeOut(chronometer)
             fadeOut(finishButton)
 
-            // Saves the route if it only has more than 2 points
-            if (mMarkerManager.getPoints().size > 2) openCompletedRunFragment()
-            isRecordingNewRoute = false
+            recordedTime =  SystemClock.elapsedRealtime()-chronometer.base
 
+            // Saves the route if it only has more than 2 points
+            if (mMarkerManager.getPoints().size > 2 && isRecordingNewRoute) openCompletedRunFragment()
+            if (!isRecordingNewRoute) PointsFile.saveBestTime(this, currentRouteFile, recordedTime)
+            isRecordingNewRoute = false
         }
 
         deleteButton.setOnClickListener() {
@@ -212,7 +215,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val completedRunFragment = CompletedRunFragment()
         val bundle = Bundle()
         bundle.putSerializable("points", mMarkerManager.getPoints())
-        bundle.putSerializable("time", SystemClock.elapsedRealtime()-chronometer.base)
+        bundle.putSerializable("time", recordedTime)
         completedRunFragment.arguments = bundle
 
         // Animation for the list opening
