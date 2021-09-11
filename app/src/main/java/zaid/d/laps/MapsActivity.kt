@@ -21,6 +21,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_maps.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -36,6 +37,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     lateinit var startButton: Button
     lateinit var finishButton: Button
     lateinit var deleteButton: Button
+    lateinit var newBestTimePrompt: TextView
+    lateinit var newBestTimeValue: TextView
 
     var listOpened = false
     var isRecordingNewRoute = false
@@ -73,6 +76,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         finishButton = findViewById(R.id.finishButton)
         deleteButton = findViewById(R.id.deleteButton)
         chronometer = findViewById(R.id.chronometer)
+        newBestTimePrompt = findViewById(R.id.bestTimeText)
+        newBestTimeValue = findViewById(R.id.bestTimeNum)
 
         waitForMap()
 
@@ -103,7 +108,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             // Saves the route if it only has more than 2 points
             if (mMarkerManager.getPoints().size > 2 && isRecordingNewRoute) openCompletedRunFragment()
-            if (!isRecordingNewRoute) PointsFile.saveBestTime(this, currentRouteFile, recordedTime)
+
+            // Saves time if it is a better time
+            if (!isRecordingNewRoute)
+                if (PointsFile.saveBestTime(this, currentRouteFile, recordedTime)) {
+                    showNewRecord()
+                }
+
             isRecordingNewRoute = false
         }
 
@@ -119,6 +130,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mainButton.setOnClickListener() {
             if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
             openRouteListFragment()
+        }
+
+        newBestTimeValue.setOnClickListener() {
+            fadeOut(newBestTimeValue)
+            fadeOut(newBestTimePrompt)
+        }
+        newBestTimePrompt.setOnClickListener() {
+            fadeOut(newBestTimeValue)
+            fadeOut(newBestTimePrompt)
         }
     }
 
@@ -295,6 +315,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }, 0)
     }
 
+    private fun showNewRecord() {
+
+        // Setting format for best time
+        val pattern = "H:mm:ss"
+        val simpleDateFormat = SimpleDateFormat(pattern, Locale.CANADA)
+        simpleDateFormat.timeZone = TimeZone.getTimeZone("GMT")
+        val bestTime = simpleDateFormat.format(recordedTime)
+        newBestTimeValue.text = bestTime
+
+        // Fades in
+        fadeIn(newBestTimeValue)
+        fadeIn(newBestTimePrompt)
+    }
 
 }
 
