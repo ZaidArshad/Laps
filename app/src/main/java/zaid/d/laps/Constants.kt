@@ -14,6 +14,7 @@ object ConstantsDistance {
     // Roughly 5 meters
     const val MIN_GAP = 0.00005
     const val METERS_PER_POINT = 5
+    const val METERS_PER_KM = 1000
 }
 
 object ConstantsLine {

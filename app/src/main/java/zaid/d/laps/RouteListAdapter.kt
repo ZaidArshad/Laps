@@ -43,7 +43,13 @@ class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route
         val bestTime = getItem(position)!!.getBestTime()
         val length = getItem(position)!!.getDistance()
 
-        val formattedLength = "$length M"
+        // Setting the length to the right units
+        var formattedLength = ""
+        if (length < 1000)
+            formattedLength = length.toString() + "M"
+        else
+            formattedLength = String.format("%.1fKM",length.toDouble()/1000)
+
 
         val pattern = "H:mm:ss"
         val simpleDateFormat = SimpleDateFormat(pattern, Locale.CANADA)
