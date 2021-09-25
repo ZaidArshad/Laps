@@ -11,8 +11,9 @@ object ConstantsZoom {
 }
 
 object ConstantsDistance {
-    // Roughly a meter
+    // Roughly 5 meters
     const val MIN_GAP = 0.00005
+    const val METERS_PER_POINT = 5
 }
 
 object ConstantsLine {

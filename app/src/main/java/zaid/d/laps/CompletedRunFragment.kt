@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.util.*
+import kotlin.collections.ArrayList
 
 class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
 
@@ -58,9 +59,9 @@ class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
         })
 
         // Getting the points of the path
-        var points = arguments?.getSerializable("points") as Array<LatLng>
+        var points = arguments!!.getSerializable("points") as Array<LatLng>
         points = ConversionsLocation.optimizeCords(points)
-        val length = (points.size).toString() + " M"
+        val length = (points.size*ConstantsDistance.METERS_PER_POINT).toString() + " M"
 
         // Getting the time ran
         val time = arguments?.getSerializable("time") as Long

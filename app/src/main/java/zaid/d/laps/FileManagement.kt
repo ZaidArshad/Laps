@@ -71,7 +71,8 @@ object PointsFile {
             }
         }
 
-        return Route(fileName, routeName, time, points.size, points.toTypedArray())
+        return Route(fileName, routeName, time,
+            points.size*ConstantsDistance.METERS_PER_POINT, points.toTypedArray())
     }
 
 
