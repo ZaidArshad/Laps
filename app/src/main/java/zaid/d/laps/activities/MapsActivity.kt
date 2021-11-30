@@ -74,17 +74,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val extras  = intent.extras
         startLocation = extras?.get("startLocation") as Location
 
-        // Sets the views used in the main app
-        mainButton = findViewById(R.id.mainButton)
-        startButton = findViewById(R.id.startButton)
-        finishButton = findViewById(R.id.finishButton)
-        deleteButton = findViewById(R.id.deleteButton)
-        chronometer = findViewById(R.id.chronometer)
-        newBestTimePrompt = findViewById(R.id.bestTimeText)
-        newBestTimeValue = findViewById(R.id.bestTimeNum)
-
+        setViews()
         waitForMap()
+        setButtons()
+    }
 
+    private fun setButtons() {
         // Changes the orientation of the main button
         supportFragmentManager.addOnBackStackChangedListener {
             if (listOpened) mainButton.rotation = 180F
@@ -133,7 +128,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // Main Button
         mainButton.setOnClickListener() {
             if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
-            isRecordingNewRoute = false;
+            isRecordingNewRoute = false
             mMap.clear()
             mMarkerManager.drawMarker()
             openRouteListFragment()
@@ -147,6 +142,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             fadeOut(newBestTimeValue)
             fadeOut(newBestTimePrompt)
         }
+    }
+
+    private fun setViews() {
+        // Sets the views used in the main app
+        mainButton = findViewById(R.id.mainButton)
+        startButton = findViewById(R.id.startButton)
+        finishButton = findViewById(R.id.finishButton)
+        deleteButton = findViewById(R.id.deleteButton)
+        chronometer = findViewById(R.id.chronometer)
+        newBestTimePrompt = findViewById(R.id.bestTimeText)
+        newBestTimeValue = findViewById(R.id.bestTimeNum)
     }
 
     /**
