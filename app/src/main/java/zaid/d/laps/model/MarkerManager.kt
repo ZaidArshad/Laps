@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.model
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,6 +10,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
+import zaid.d.laps.R
+import zaid.d.laps.objects.*
 
 /**
 Class to manage the Marker() object on the google maps fragment
@@ -103,7 +105,8 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
         // Getting the marker icon
         val myPersonIcon = AppCompatResources.getDrawable(
-            mContext, R.drawable.ic_usermarkerslimborderless)!!.toBitmap()
+            mContext, R.drawable.ic_usermarkerslimborderless
+        )!!.toBitmap()
         myPerson.icon(BitmapDescriptorFactory.fromBitmap(myPersonIcon))
 
         // Puts the created marker on map
@@ -113,7 +116,8 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
     fun drawMarker() {
         val myPersonIcon = AppCompatResources.getDrawable(
-            mContext, R.drawable.ic_usermarkerslimborderless)!!.toBitmap()
+            mContext, R.drawable.ic_usermarkerslimborderless
+        )!!.toBitmap()
         myPerson.icon(BitmapDescriptorFactory.fromBitmap(myPersonIcon))
 
         // Puts the created marker on map

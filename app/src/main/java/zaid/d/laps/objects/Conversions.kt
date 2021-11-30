@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.objects
 
 import android.location.Location
 import com.google.android.gms.maps.model.LatLng

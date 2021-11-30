@@ -1,9 +1,10 @@
-package zaid.d.laps
+package zaid.d.laps.objects
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
+import zaid.d.laps.model.Route
 import java.io.*
 
 object PointsFile {
@@ -72,7 +73,7 @@ object PointsFile {
         }
 
         return Route(fileName, routeName, time,
-            points.size*ConstantsDistance.METERS_PER_POINT, points.toTypedArray())
+            points.size* ConstantsDistance.METERS_PER_POINT, points.toTypedArray())
     }
 
 

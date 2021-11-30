@@ -1,10 +1,9 @@
-package zaid.d.laps
+package zaid.d.laps.activities
 
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Button
@@ -12,10 +11,12 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
+import zaid.d.laps.objects.ConstantsDistance
+import zaid.d.laps.objects.ConversionsLocation
+import zaid.d.laps.objects.PointsFile
+import zaid.d.laps.R
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.util.*
-import kotlin.collections.ArrayList
 
 class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
 
@@ -61,7 +62,7 @@ class CompletedRunFragment : Fragment(R.layout.fragment_completed_run) {
         // Getting the points of the path
         var points = arguments!!.getSerializable("points") as Array<LatLng>
         points = ConversionsLocation.optimizeCords(points)
-        val length = (points.size*ConstantsDistance.METERS_PER_POINT).toString() + " M"
+        val length = (points.size* ConstantsDistance.METERS_PER_POINT).toString() + " M"
 
         // Getting the time ran
         val time = arguments?.getSerializable("time") as Long

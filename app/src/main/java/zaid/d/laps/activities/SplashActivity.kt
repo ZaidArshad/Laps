@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,6 +9,9 @@ import android.util.Log
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationServices
+import zaid.d.laps.objects.ConstantsTime
+import zaid.d.laps.objects.PermissionsLocation
+import zaid.d.laps.R
 
 /**
 Activity when the app is opened

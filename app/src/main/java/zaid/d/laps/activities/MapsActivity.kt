@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.activities
 
 import android.annotation.SuppressLint
 import android.location.Location
@@ -21,6 +21,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_maps.*
+import zaid.d.laps.*
+import zaid.d.laps.R
+import zaid.d.laps.model.MarkerManager
+import zaid.d.laps.objects.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -129,6 +133,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         // Main Button
         mainButton.setOnClickListener() {
             if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
+            isRecordingNewRoute = false;
+            mMap.clear()
+            mMarkerManager.drawMarker()
             openRouteListFragment()
         }
 
@@ -161,7 +168,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mMarkerManager = MarkerManager(this, mMap)
         mMarkerManager.setMarker(ConversionsLocation.getCords(startLocation))
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(startLocation), ConstantsZoom.MAIN_ZOOM))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+            ConversionsLocation.getCords(startLocation),
+            ConstantsZoom.MAIN_ZOOM
+        ))
 
         // Keeps track of the position on the previous update
         var oldPosition = startLocation
@@ -172,7 +182,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                     if (location != null)
                         oldPosition = mMarkerManager.interpolateMarker(
-                            oldPosition, location, DrawingManagement.getDrawing(this@MapsActivity), isCameraMoving)
+                            oldPosition, location,
+                            DrawingManagement.getDrawing(this@MapsActivity), isCameraMoving)
                 }
                 updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
             }

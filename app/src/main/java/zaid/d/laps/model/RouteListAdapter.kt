@@ -1,28 +1,19 @@
-package zaid.d.laps
+package zaid.d.laps.model
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.os.SystemClock
-import android.util.Log
 import android.view.*
-import android.view.DragEvent.ACTION_DRAG_STARTED
-import android.view.DragEvent.ACTION_DROP
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.fragment.app.FragmentManager
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
-import java.math.BigDecimal
-import java.math.RoundingMode
+import zaid.d.laps.R
+import zaid.d.laps.activities.MapsActivity
+import zaid.d.laps.objects.ConstantsLine
+import zaid.d.laps.objects.ConversionsLocation
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.properties.Delegates
 
 class RouteListAdapter(context: Context, resource: Int, objects: ArrayList<Route>, activity: MapsActivity) :
     ArrayAdapter<Route>(

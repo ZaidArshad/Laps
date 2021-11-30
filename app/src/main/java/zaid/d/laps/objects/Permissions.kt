@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.objects
 
 import android.Manifest
 import android.annotation.SuppressLint

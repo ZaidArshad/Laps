@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.objects
 
 object ConstantsTime {
     const val DELAY_TIME  = 1000L

@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.model
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions

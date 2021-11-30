@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MapsActivity"
+            android:name=".activities.MapsActivity"
             android:label="Home"
             android:screenOrientation="portrait"
             android:theme="@style/MainTheme" />
@@ -40,7 +40,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:label="Laps"
             android:screenOrientation="fullSensor">
             <intent-filter>

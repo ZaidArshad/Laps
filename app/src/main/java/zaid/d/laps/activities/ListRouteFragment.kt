@@ -1,4 +1,4 @@
-package zaid.d.laps
+package zaid.d.laps.activities
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -9,6 +9,11 @@ import android.widget.Button
 import android.widget.ListView
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_maps.*
+import zaid.d.laps.*
+import zaid.d.laps.model.Route
+import zaid.d.laps.model.RouteListAdapter
+import zaid.d.laps.objects.ConversionsSort
+import zaid.d.laps.objects.PointsFile
 
 class ListRouteFragment : Fragment(R.layout.fragment_list_route) {
     override fun onCreate(savedInstanceState: Bundle?) {
