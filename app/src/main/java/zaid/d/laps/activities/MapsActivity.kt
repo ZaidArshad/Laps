@@ -1,24 +1,32 @@
 package zaid.d.laps.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.Chronometer
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.common.api.internal.GoogleApiManager
 import com.google.android.gms.location.*
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.android.synthetic.main.activity_maps.*
 import zaid.d.laps.*
@@ -27,9 +35,27 @@ import zaid.d.laps.model.MarkerManager
 import zaid.d.laps.objects.*
 import java.text.SimpleDateFormat
 import java.util.*
+import com.google.android.gms.location.LocationServices
+
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+
+import com.google.android.gms.location.LocationCallback
 
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+
+
+
+
+
+
+
+
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     lateinit var mMap: GoogleMap
     private var isMapReady = false
@@ -53,6 +79,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var chronometer: Chronometer
 
     private var updateHandler = Handler()
+
+    private lateinit var oldPosition: Location
 
 
     /**
@@ -166,7 +194,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         isMapReady = true
         mMap = googleMap
         mMap.isBuildingsEnabled = false
-        mMap.isMyLocationEnabled = true
+        mMap.isMyLocationEnabled = false
+
         mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.styled_map))
 
         // Sets up the marker on the map
@@ -180,23 +209,43 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         ))
 
         // Keeps track of the position on the previous update
-        var oldPosition = startLocation
+        oldPosition = startLocation
 
         // Updates the position regularly
-        updateHandler.postDelayed(object: Runnable {
-            override fun run() {
-                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    if (location != null)
-                        oldPosition = mMarkerManager.interpolateMarker(
-                            oldPosition, location,
-                            DrawingManagement.getDrawing(this@MapsActivity), isCameraMoving)
+//        updateHandler.postDelayed(object: Runnable {
+//            override fun run() {
+//                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+//                    if (location != null) {
+//                        oldPosition = mMarkerManager.interpolateMarker(
+//                            oldPosition, location,
+//                            DrawingManagement.getDrawing(this@MapsActivity), isCameraMoving)
+//                    }
+//                }
+//                updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
+//            }
+//        }, 0)
+
+        val mLocationRequest = LocationRequest.create()
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        mLocationRequest.interval = 10000
+        mLocationRequest.fastestInterval = 2000
+
+        fusedLocationClient.requestLocationUpdates(
+            mLocationRequest, object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    onLocationChanged(locationResult.lastLocation)
                 }
-                updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
-            }
-        }, 0)
-
-
+            },
+            Looper.getMainLooper()
+        )
     }
+
+    override fun onLocationChanged(location: Location) {
+        oldPosition = mMarkerManager.interpolateMarker(
+            oldPosition, location,
+            DrawingManagement.getDrawing(this@MapsActivity), isCameraMoving)
+    }
+
 
     /**
     Repeatedly loops until the map is ready
