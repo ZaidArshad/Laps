@@ -23,17 +23,22 @@ object ConversionsLocation {
     fun getBounds(points: Array<LatLng>): LatLngBounds {
 
         // Setting up variables
-        var northEast = points.last()
-        var southWest = points.first()
+        var north = points.first().latitude
+        var south = points.last().latitude
+        var west = points.first().longitude
+        var east = points.first().longitude
 
         // Comparing with the extreme points
         for (point in points) {
-            if (getLatLongSum(point) > getLatLongSum(northEast)) northEast = point
-            else if (getLatLongSum(point) < getLatLongSum(southWest)) southWest = point
+            if (point.latitude > north) north = point.latitude
+            else if (point.latitude < south) south = point.latitude
+
+            if (point.longitude > east) east = point.longitude
+            else if (point.longitude < west) west = point.longitude
         }
 
         // Sets the bounds
-        return LatLngBounds(southWest, northEast)
+        return LatLngBounds(LatLng(south,west), LatLng(north, east))
     }
 
     private fun getLatLongSum(point: LatLng): Double {
