@@ -42,9 +42,6 @@ class MarkerManager(context: Context, map: GoogleMap) {
         val polyline = mMap.addPolyline(lineDetails)
         polyline.width = ConstantsLine.LINE_WIDTH
 
-        // Rotation
-        val dRotation = equivalentAngle(nextPosition.bearing-oldPosition.bearing) / ConstantsTime.FRAME_CAP
-
         // Distance to increment every frame
         val dLatitude = (nextPosition.latitude - lat) / ConstantsTime.FRAME_CAP
         val dLongitude = (nextPosition.longitude- long) / ConstantsTime.FRAME_CAP
@@ -61,7 +58,6 @@ class MarkerManager(context: Context, map: GoogleMap) {
                     lat += dLatitude
                     long += dLongitude
                     personMarker.position = LatLng(lat, long)
-                    personMarker.rotation += dRotation
 
                     if (draw) {
                         points.add(LatLng(lat, long))
@@ -78,10 +74,11 @@ class MarkerManager(context: Context, map: GoogleMap) {
 
             // Sets the final location to the exact spot
             personMarker.position = ConversionsLocation.getCords(nextPosition)
+            personMarker.rotation = oldPosition.bearingTo(nextPosition)
 
             if (adjustCam) {
                 val cam = CameraPosition.Builder()
-                    .bearing(nextPosition.bearing)
+                    .bearing(oldPosition.bearingTo(nextPosition))
                     .zoom(ConstantsZoom.MAIN_ZOOM)
                     .target(ConversionsLocation.getCords(nextPosition))
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam.build()))
@@ -93,6 +90,10 @@ class MarkerManager(context: Context, map: GoogleMap) {
         return oldPosition
     }
 
+    fun clearPoints() {
+        points.clear()
+    }
+
     /**
     Creates the marker on the map to the current location of the user
      */
@@ -101,7 +102,7 @@ class MarkerManager(context: Context, map: GoogleMap) {
         // Marker position setting
         myPerson = MarkerOptions().position(cords)
         myPerson.flat(true)
-        myPerson.anchor(0.5F, 0.5F)
+        myPerson.anchor(0.5f, 0.5f)
 
         // Getting the marker icon
         val myPersonIcon = AppCompatResources.getDrawable(
@@ -121,6 +122,7 @@ class MarkerManager(context: Context, map: GoogleMap) {
         myPerson.icon(BitmapDescriptorFactory.fromBitmap(myPersonIcon))
 
         // Puts the created marker on map
+        myPerson.position(personMarker.position)
         personMarker = mMap.addMarker(myPerson)!!
     }
 
@@ -138,7 +140,14 @@ class MarkerManager(context: Context, map: GoogleMap) {
             // Shifts the camera to the location and plots the point
             personMarker.position = ConversionsLocation.getCords(location!!)
             personMarker.rotation = location.bearing
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ConversionsLocation.getCords(location), ConstantsZoom.MAIN_ZOOM))
+            val cam = CameraPosition.builder()
+                .zoom(ConstantsZoom.MAIN_ZOOM)
+                .bearing(personMarker.rotation)
+                .target(ConversionsLocation.getCords(location))
+                .build()
+
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cam))
+
         }
 
     }

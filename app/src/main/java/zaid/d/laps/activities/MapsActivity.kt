@@ -35,25 +35,12 @@ import zaid.d.laps.model.MarkerManager
 import zaid.d.laps.objects.*
 import java.text.SimpleDateFormat
 import java.util.*
+
 import com.google.android.gms.location.LocationServices
-
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 
 import com.google.android.gms.location.LocationCallback
-
-
-
-
-
-
-
-
-
-
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
@@ -116,6 +103,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         // When the user wants to start running
         startButton.setOnClickListener() {
+            mMarkerManager.clearPoints()
             if (isRecordingNewRoute) DrawingManagement.setDrawing(this, true) // Cursor leaves trail
             if (deleteButton.visibility == View.VISIBLE) fadeOut(deleteButton)
             fadeOut(startButton)
@@ -210,20 +198,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
         // Keeps track of the position on the previous update
         oldPosition = startLocation
-
-        // Updates the position regularly
-//        updateHandler.postDelayed(object: Runnable {
-//            override fun run() {
-//                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-//                    if (location != null) {
-//                        oldPosition = mMarkerManager.interpolateMarker(
-//                            oldPosition, location,
-//                            DrawingManagement.getDrawing(this@MapsActivity), isCameraMoving)
-//                    }
-//                }
-//                updateHandler.postDelayed(this, ConstantsTime.DELAY_TIME)
-//            }
-//        }, 0)
 
         val mLocationRequest = LocationRequest.create()
         mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
