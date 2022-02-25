@@ -27,3 +27,6 @@ Once the user clicks the finish button at the bottom of their screen their run e
 
 ## Running Recorded Routes
 To run a recorded route the user must click the arrow at the bottom to show the list of routes. When clicked, a visual path will display on the map and the camera will pan to it. The timer will commence 3 seconds after the start button is pressed. 
+
+## Posting a New Best Time
+When a new best time is posted a little text pop up will show up with the time and can be dismissed with a simple click.
